@@ -73,21 +73,29 @@ export async function saveOnboardingAnswers(
   console.log('Answers saved successfully');
 }
 
-// Server action to create a user using Stack Auth ID
-export async function createUser(
+// Server action to create or update user using Stack Auth ID
+export async function createOrUpdateUser(
   stackAuthId: string,
   name: string,
   email: string
 ) {
+  const existingUser = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.stack_auth_id, stackAuthId))
+    .limit(1)
+    .execute();
+
+  if (existingUser.length > 0) {
+    console.log('User already exists:', existingUser[0]);
+    return existingUser[0];
+  }
+
   const newUser = await db
     .insert(usersTable)
-    .values({
-      stack_auth_id: stackAuthId,
-      name,
-      email,
-    })
+    .values({ stack_auth_id: stackAuthId, name, email })
     .returning();
 
-  console.log('User created:', newUser);
+  console.log('User created:', newUser[0]);
   return newUser[0];
 }
