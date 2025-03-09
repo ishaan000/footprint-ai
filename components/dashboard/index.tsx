@@ -4,7 +4,14 @@ import { useCallback, useMemo, useState } from 'react';
 
 import { createCarbonEvent, deleteCarbonEvent } from '@/db';
 import { Add as AddIcon } from '@mui/icons-material';
-import { Box, Container, IconButton, Paper, Typography } from '@mui/material';
+import {
+  Box,
+  Container,
+  IconButton,
+  Paper,
+  Skeleton,
+  Typography,
+} from '@mui/material';
 import { addDays, format, isSameDay, startOfWeek } from 'date-fns';
 
 import type { CarbonEvent } from '@/types/CarbonEvents';
@@ -82,11 +89,6 @@ export default function Dashboard({
       ),
     [events, weekDays]
   );
-
-  if (loading) {
-    return <Typography>Loading...</Typography>;
-  }
-
   return (
     <Container maxWidth='lg' className='py-4'>
       <Box className='flex flex-col gap-3'>
@@ -111,10 +113,13 @@ export default function Dashboard({
                 size='small'
                 onClick={() => setIsAddEventOpen(true)}
                 color='primary'
+                disabled={loading}
               >
                 <AddIcon />
               </IconButton>
             </Box>
+
+            {loading && <Skeleton height={200} />}
 
             <EventList
               events={selectedDateEvents}
@@ -134,12 +139,14 @@ export default function Dashboard({
         </Paper>
 
         {/* Add Event Dialog */}
-        <AddEventDialog
-          open={isAddEventOpen}
-          onClose={() => setIsAddEventOpen(false)}
-          onAdd={handleAddEvent}
-          selectedDate={selectedDate}
-        />
+        {!loading && (
+          <AddEventDialog
+            open={isAddEventOpen}
+            onClose={() => setIsAddEventOpen(false)}
+            onAdd={handleAddEvent}
+            selectedDate={selectedDate}
+          />
+        )}
       </Box>
     </Container>
   );
