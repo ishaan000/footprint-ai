@@ -2,6 +2,8 @@
 
 import { Container, Typography } from '@mui/material';
 
+import { Chat } from '@/components/Chat';
+
 import { OnboardingQuestionnaire } from './components/OnboardingQuestionnaire';
 import type { OnboardingAnswer, OnboardingQuestion } from './types/onboarding';
 
@@ -105,6 +107,8 @@ export default function Home() {
         questions={onboardingQuestions}
         onComplete={handleOnboardingComplete}
       />
+
+      <Chat />
     </Container>
   );
 }
