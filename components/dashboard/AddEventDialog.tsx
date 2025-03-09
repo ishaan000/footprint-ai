@@ -14,7 +14,6 @@ import {
   Typography,
 } from '@mui/material';
 import { format } from 'date-fns';
-import { v4 as uuidv4 } from 'uuid';
 
 import type { CarbonEvent, CarbonEventType } from '@/types/CarbonEvents';
 import { CARBON_EVENT_TYPES } from '@/types/CarbonEvents';
@@ -41,7 +40,7 @@ export function AddEventDialog({
     if (!selectedType) return;
 
     const newEvent: CarbonEvent = {
-      id: uuidv4(),
+      id: 0,
       type: selectedType,
       date: selectedDate.toISOString(),
       description: description.trim() || undefined,

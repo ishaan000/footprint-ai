@@ -13,10 +13,14 @@ import { CarbonScoreCard } from './CarbonScoreCard';
 import { EventList } from './EventList';
 import { WeeklyCalendar } from './WeeklyCalendar';
 
-export default function Dashboard() {
+export default function Dashboard({
+  initialEvents,
+}: {
+  initialEvents: CarbonEvent[];
+}) {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [isAddEventOpen, setIsAddEventOpen] = useState(false);
-  const [events, setEvents] = useState<CarbonEvent[]>([]);
+  const [events, setEvents] = useState<CarbonEvent[]>(initialEvents);
 
   const weekStart = useMemo(
     () => startOfWeek(selectedDate, { weekStartsOn: 1 }),
@@ -39,7 +43,7 @@ export default function Dashboard() {
     setIsAddEventOpen(false);
   }, []);
 
-  const handleDeleteEvent = useCallback((eventId: string) => {
+  const handleDeleteEvent = useCallback((eventId: number) => {
     setEvents((prev) => prev.filter((event) => event.id !== eventId));
   }, []);
 
