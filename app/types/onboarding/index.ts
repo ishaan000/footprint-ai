@@ -26,4 +26,4 @@ export interface OnboardingState {
 export interface OnboardingQuestionnaireProps {
   questions: OnboardingQuestion[];
   onComplete: (answers: OnboardingAnswer[]) => void;
-} 
+}

@@ -1,7 +1,12 @@
 'use client';
 
-import { useState, useCallback } from 'react';
-import type { OnboardingQuestion, OnboardingAnswer, OnboardingState } from '../../types/onboarding';
+import { useCallback, useState } from 'react';
+
+import type {
+  OnboardingAnswer,
+  OnboardingQuestion,
+  OnboardingState,
+} from '../../types/onboarding';
 
 export const useOnboardingQuestionnaire = (questions: OnboardingQuestion[]) => {
   const [state, setState] = useState<OnboardingState>({
@@ -10,40 +15,44 @@ export const useOnboardingQuestionnaire = (questions: OnboardingQuestion[]) => {
     isComplete: false,
   });
 
-  const handleAnswer = useCallback((selectedOptionId: string) => {
-    setState((prev: OnboardingState) => {
-      const currentQuestion = questions[prev.currentQuestionIndex];
-      const newAnswers = [...prev.answers];
-      
-      // Update or add the answer for the current question
-      const answerIndex = newAnswers.findIndex(
-        (a: OnboardingAnswer) => a.questionId === currentQuestion.id
-      );
-      
-      if (answerIndex >= 0) {
-        newAnswers[answerIndex] = {
-          questionId: currentQuestion.id,
-          selectedOptionId,
-        };
-      } else {
-        newAnswers.push({
-          questionId: currentQuestion.id,
-          selectedOptionId,
-        });
-      }
+  const handleAnswer = useCallback(
+    (selectedOptionId: string) => {
+      setState((prev: OnboardingState) => {
+        const currentQuestion = questions[prev.currentQuestionIndex];
+        const newAnswers = [...prev.answers];
 
-      const isLastQuestion = prev.currentQuestionIndex === questions.length - 1;
-      
-      return {
-        ...prev,
-        answers: newAnswers,
-        currentQuestionIndex: isLastQuestion
-          ? prev.currentQuestionIndex
-          : prev.currentQuestionIndex + 1,
-        isComplete: isLastQuestion,
-      };
-    });
-  }, [questions]);
+        // Update or add the answer for the current question
+        const answerIndex = newAnswers.findIndex(
+          (a: OnboardingAnswer) => a.questionId === currentQuestion.id
+        );
+
+        if (answerIndex >= 0) {
+          newAnswers[answerIndex] = {
+            questionId: currentQuestion.id,
+            selectedOptionId,
+          };
+        } else {
+          newAnswers.push({
+            questionId: currentQuestion.id,
+            selectedOptionId,
+          });
+        }
+
+        const isLastQuestion =
+          prev.currentQuestionIndex === questions.length - 1;
+
+        return {
+          ...prev,
+          answers: newAnswers,
+          currentQuestionIndex: isLastQuestion
+            ? prev.currentQuestionIndex
+            : prev.currentQuestionIndex + 1,
+          isComplete: isLastQuestion,
+        };
+      });
+    },
+    [questions]
+  );
 
   const goToPreviousQuestion = useCallback(() => {
     setState((prev: OnboardingState) => ({
@@ -62,7 +71,8 @@ export const useOnboardingQuestionnaire = (questions: OnboardingQuestion[]) => {
   }, []);
 
   const currentAnswer = state.answers.find(
-    (a: OnboardingAnswer) => a.questionId === questions[state.currentQuestionIndex]?.id
+    (a: OnboardingAnswer) =>
+      a.questionId === questions[state.currentQuestionIndex]?.id
   );
 
   return {
@@ -76,4 +86,4 @@ export const useOnboardingQuestionnaire = (questions: OnboardingQuestion[]) => {
     resetQuestionnaire,
     totalQuestions: questions.length,
   };
-}; 
+};

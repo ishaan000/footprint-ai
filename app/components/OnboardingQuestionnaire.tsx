@@ -1,11 +1,21 @@
 'use client';
 
-import { useState, useEffect } from 'react';
+import { useEffect, useState } from 'react';
+
 import dynamic from 'next/dynamic';
-import { Card, CardContent, Button, LinearProgress, Box, Typography } from '@mui/material';
+
 import { ChevronLeft } from '@mui/icons-material';
-import type { OnboardingQuestionnaireProps } from '../types/onboarding';
+import {
+  Box,
+  Button,
+  Card,
+  CardContent,
+  LinearProgress,
+  Typography,
+} from '@mui/material';
+
 import { useOnboardingQuestionnaire } from '../hooks/onboarding-questionnaire/useOnboardingQuestionnaire';
+import type { OnboardingQuestionnaireProps } from '../types/onboarding';
 
 // Dynamically import Framer Motion components with ssr disabled
 const MotionDiv = dynamic(
@@ -47,15 +57,15 @@ export const OnboardingQuestionnaire = ({
   const progress = ((currentQuestionIndex + 1) / totalQuestions) * 100;
 
   return (
-    <Box className="min-h-screen w-full max-w-md mx-auto px-4 py-8 flex flex-col">
+    <Box className='mx-auto flex min-h-screen w-full max-w-md flex-col px-4 py-8'>
       {/* Progress bar */}
-      <Box className="mb-8">
+      <Box className='mb-8'>
         <LinearProgress
-          variant="determinate"
+          variant='determinate'
           value={progress}
           sx={{ height: 8, borderRadius: 4 }}
         />
-        <Typography variant="body2" className="mt-2 text-gray-600">
+        <Typography variant='body2' className='mt-2 text-gray-600'>
           Question {currentQuestionIndex + 1} of {totalQuestions}
         </Typography>
       </Box>
@@ -63,10 +73,10 @@ export const OnboardingQuestionnaire = ({
       {/* Back button */}
       {currentQuestionIndex > 0 && (
         <Button
-          variant="text"
+          variant='text'
           onClick={goToPreviousQuestion}
           startIcon={<ChevronLeft />}
-          className="mb-4 self-start"
+          className='mb-4 self-start'
         >
           Back
         </Button>
@@ -78,22 +88,22 @@ export const OnboardingQuestionnaire = ({
         animate={{ opacity: 1, x: 0 }}
         exit={{ opacity: 0, x: -20 }}
         transition={{ duration: 0.3 }}
-        className="space-y-6"
+        className='space-y-6'
       >
         {/* Question */}
-        <Box className="space-y-2">
-          <Typography variant="h4" component="h2">
+        <Box className='space-y-2'>
+          <Typography variant='h4' component='h2'>
             {currentQuestion.question}
           </Typography>
           {currentQuestion.description && (
-            <Typography variant="body1" color="text.secondary">
+            <Typography variant='body1' color='text.secondary'>
               {currentQuestion.description}
             </Typography>
           )}
         </Box>
 
         {/* Options */}
-        <Box className="grid gap-4">
+        <Box className='grid gap-4'>
           {currentQuestion.options.map((option) => (
             <Card
               key={option.id}
@@ -106,24 +116,33 @@ export const OnboardingQuestionnaire = ({
                   boxShadow: 3,
                 },
                 border: currentAnswer?.selectedOptionId === option.id ? 2 : 1,
-                borderColor: currentAnswer?.selectedOptionId === option.id ? 'primary.main' : 'divider'
+                borderColor:
+                  currentAnswer?.selectedOptionId === option.id
+                    ? 'primary.main'
+                    : 'divider',
               }}
             >
-              <CardContent className="p-4">
-                <Box className="flex items-center gap-3">
+              <CardContent className='p-4'>
+                <Box className='flex items-center gap-3'>
                   {option.icon && (
-                    <Typography variant="h5" className="text-xl">
+                    <Typography variant='h5' className='text-xl'>
                       {option.icon}
                     </Typography>
                   )}
-                  <Typography variant="body1" className="flex-grow font-medium">
+                  <Typography variant='body1' className='flex-grow font-medium'>
                     {option.label}
                   </Typography>
                   <Box
-                    className="w-5 h-5 rounded-full border-2"
+                    className='h-5 w-5 rounded-full border-2'
                     sx={{
-                      borderColor: currentAnswer?.selectedOptionId === option.id ? 'primary.main' : 'grey.300',
-                      bgcolor: currentAnswer?.selectedOptionId === option.id ? 'primary.main' : 'transparent'
+                      borderColor:
+                        currentAnswer?.selectedOptionId === option.id
+                          ? 'primary.main'
+                          : 'grey.300',
+                      bgcolor:
+                        currentAnswer?.selectedOptionId === option.id
+                          ? 'primary.main'
+                          : 'transparent',
                     }}
                   />
                 </Box>
@@ -134,4 +153,4 @@ export const OnboardingQuestionnaire = ({
       </MotionDiv>
     </Box>
   );
-}; 
+};
