@@ -8,6 +8,7 @@ import {
   initialQuestionOptionsTable,
   initialQuestionsTable,
   onboardingAnswersTable,
+  usersTable,
 } from './schema';
 
 const db = drizzle(process.env.DATABASE_URL!);
@@ -33,11 +34,24 @@ export async function fetchQuestionsWithOptions(): Promise<
   }));
 }
 
-// Server action to save questionnaire answers
+// Server action to save questionnaire answers using Stack Auth ID
 export async function saveOnboardingAnswers(
-  userId: number,
+  userStackAuthId: string,
   answers: OnboardingAnswer[]
 ) {
+  const user = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.stack_auth_id, userStackAuthId))
+    .limit(1)
+    .execute();
+
+  if (!user.length) {
+    throw new Error('User not found');
+  }
+
+  const userId = user[0].id;
+
   // First delete existing answers for the user to allow redoing questionnaire
   await db
     .delete(onboardingAnswersTable)
