@@ -1,42 +1,28 @@
 import 'dotenv/config';
-import { eq } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/neon-http';
 
-import { usersTable } from './schema';
+import { OnboardingQuestion } from '@/types/Onboarding';
+
+import { initialQuestionOptionsTable, initialQuestionsTable } from './schema';
 
 const db = drizzle(process.env.DATABASE_URL!);
 
-async function main() {
-  // Insert a new user
-  const newUser = await db
-    .insert(usersTable)
-    .values({
-      stack_auth_id: 'some_unique_id',
-      name: 'John',
-      age: 30,
-      email: 'john@example.com',
-    })
-    .returning();
+export async function fetchQuestionsWithOptions(): Promise<
+  OnboardingQuestion[]
+> {
+  const questions = await db.select().from(initialQuestionsTable);
+  const options = await db.select().from(initialQuestionOptionsTable);
 
-  console.log('Inserted user:', newUser);
-
-  // Update user age by email
-  await db
-    .update(usersTable)
-    .set({ age: 31 })
-    .where(eq(usersTable.email, newUser[0].email));
-  console.log('User info updated!');
-
-  // Fetch updated user
-  const updatedUser = await db
-    .select()
-    .from(usersTable)
-    .where(eq(usersTable.email, newUser[0].email));
-  console.log('Updated user:', updatedUser);
-
-  // Delete user
-  await db.delete(usersTable).where(eq(usersTable.email, newUser[0].email));
-  console.log('User deleted!');
+  return questions.map((question) => ({
+    id: question.id,
+    question: question.question,
+    description: question.description,
+    options: options
+      .filter((option) => option.question_id === question.id)
+      .map((opt) => ({
+        id: opt.id.toString(),
+        icon: opt.icon,
+        label: opt.option,
+      })),
+  }));
 }
-
-main().catch(console.error);

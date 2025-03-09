@@ -1,5 +1,5 @@
 export interface OnboardingQuestion {
-  id: string;
+  id: number;
   question: string;
   options: OnboardingOption[];
   description?: string;
@@ -25,5 +25,4 @@ export interface OnboardingState {
 // Props interface for the component
 export interface OnboardingQuestionnaireProps {
   questions: OnboardingQuestion[];
-  onComplete: (answers: OnboardingAnswer[]) => void;
-} 
+}
