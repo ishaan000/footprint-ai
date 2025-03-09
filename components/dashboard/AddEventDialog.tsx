@@ -58,7 +58,11 @@ export function AddEventDialog({
       <DialogTitle>Add Carbon Event</DialogTitle>
       <DialogContent>
         <Box className='mt-2 space-y-4'>
-          <Typography variant='subtitle2' color='text.secondary'>
+          <Typography
+            variant='subtitle2'
+            color='text.secondary'
+            marginBottom={2}
+          >
             Date: {format(selectedDate, 'MMMM d, yyyy')}
           </Typography>
 
@@ -73,6 +77,7 @@ export function AddEventDialog({
               );
               setSelectedType(type || null);
             }}
+            margin={'normal'}
           >
             {CARBON_EVENT_TYPES.map((type) => (
               <MenuItem key={type.id} value={type.id}>
@@ -84,7 +89,7 @@ export function AddEventDialog({
                     color='text.secondary'
                     className='ml-auto'
                   >
-                    {type.baseScore} kg CO₂
+                    {type.baseScore} points
                   </Typography>
                 </Box>
               </MenuItem>
@@ -98,15 +103,16 @@ export function AddEventDialog({
             onChange={(e) => setDescription(e.target.value)}
             multiline
             rows={2}
+            margin={'normal'}
           />
 
           {selectedType && (
             <Box className='rounded bg-gray-50 p-3'>
               <Typography variant='subtitle2' gutterBottom>
-                Carbon Impact
+                Carbon Score Impact
               </Typography>
               <Typography variant='h6' color='primary'>
-                {selectedType.baseScore.toFixed(1)} kg CO₂
+                {Math.round(selectedType.baseScore)}
               </Typography>
             </Box>
           )}

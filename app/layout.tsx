@@ -11,6 +11,7 @@ import { StackProvider, StackTheme } from '@stackframe/stack';
 
 import '@/app/globals.css';
 
+import Footer from '@/components/footer';
 import { Header } from '@/components/header';
 
 const geistSans = Geist({
@@ -46,8 +47,11 @@ export default function RootLayout({
               <ThemeProvider theme={theme}>
                 {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
                 <CssBaseline />
-                <Header />
-                {children}
+                <div className='flex min-h-screen flex-col justify-between'>
+                  <Header />
+                  {children}
+                  <Footer />
+                </div>
               </ThemeProvider>
             </AppRouterCacheProvider>
           </StackTheme>

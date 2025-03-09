@@ -2,6 +2,8 @@
 
 import { useCallback, useMemo, useState } from 'react';
 
+import Image from 'next/image';
+
 import { createCarbonEvent, deleteCarbonEvent } from '@/db';
 import { Add as AddIcon } from '@mui/icons-material';
 import {
@@ -91,6 +93,13 @@ export default function Dashboard({
   );
   return (
     <Container maxWidth='lg' className='py-4'>
+      <Image
+        src='/freepik__modern-logo-for-a-sustainability-app-a-simple-eleg__84338.webp'
+        alt='Carbon Logo'
+        width={200}
+        height={200}
+        className='object center mx-auto w-full object-cover'
+      />
       <Box className='flex flex-col gap-3'>
         {/* Calendar */}
         <Paper className='p-3'>
@@ -129,14 +138,13 @@ export default function Dashboard({
         </Box>
 
         {/* Score Card */}
-        <Paper className='p-3'>
-          <CarbonScoreCard
-            score={selectedDateEvents.reduce(
-              (sum, event) => sum + event.carbonScore,
-              0
-            )}
-          />
-        </Paper>
+        <CarbonScoreCard
+          title={"Today's Carbon Score"}
+          score={selectedDateEvents.reduce(
+            (sum, event) => sum + event.carbonScore,
+            0
+          )}
+        />
 
         {/* Add Event Dialog */}
         {!loading && (

@@ -157,7 +157,7 @@ export async function createCarbonEvent(
 
 // Server action to delete a carbon event
 export async function deleteCarbonEvent(eventId: number) {
-  return db
+  await db
     .delete(carbonEventsTable)
     .where(eq(carbonEventsTable.id, eventId))
     .execute();
