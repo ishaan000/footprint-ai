@@ -7,6 +7,7 @@ import { drizzle } from 'drizzle-orm/neon-http';
 import { OnboardingAnswer, OnboardingQuestion } from '@/types/Onboarding';
 
 import {
+  carbonEventsTable,
   initialQuestionOptionsTable,
   initialQuestionsTable,
   onboardingAnswersTable,
@@ -117,8 +118,8 @@ export async function fetchUserCarbonEvents(userStackAuthId: string) {
 
   return db
     .select()
-    .from(onboardingAnswersTable)
-    .where(eq(onboardingAnswersTable.user_id, userId))
+    .from(carbonEventsTable)
+    .where(eq(carbonEventsTable.user_id, userId))
     .execute();
 }
 
