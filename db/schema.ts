@@ -22,6 +22,7 @@ export const initialQuestionOptionsTable = pgTable('initial_question_options', {
   question_id: integer()
     .notNull()
     .references(() => initialQuestionsTable.id, { onDelete: 'cascade' }),
+  icon: varchar({ length: 255 }).notNull(),
   option: varchar({ length: 255 }).notNull(),
   description: varchar({ length: 255 }).notNull(),
   carbon_footprint: integer().notNull(),
