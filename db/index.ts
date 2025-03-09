@@ -1,3 +1,5 @@
+'use server';
+
 import 'dotenv/config';
 import { eq } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/neon-http';
@@ -69,4 +71,23 @@ export async function saveOnboardingAnswers(
   );
 
   console.log('Answers saved successfully');
+}
+
+// Server action to create a user using Stack Auth ID
+export async function createUser(
+  stackAuthId: string,
+  name: string,
+  email: string
+) {
+  const newUser = await db
+    .insert(usersTable)
+    .values({
+      stack_auth_id: stackAuthId,
+      name,
+      email,
+    })
+    .returning();
+
+  console.log('User created:', newUser);
+  return newUser[0];
 }
