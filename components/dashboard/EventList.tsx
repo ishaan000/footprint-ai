@@ -8,7 +8,7 @@ export function EventList({
   onDelete,
 }: {
   events: CarbonEvent[];
-  onDelete: (id: string) => void;
+  onDelete: (id: number) => void;
 }) {
   return (
     <Box className='space-y-2'>

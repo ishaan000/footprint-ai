@@ -4,9 +4,11 @@ import 'dotenv/config';
 import { eq } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/neon-http';
 
+import { CarbonEvent } from '@/types/CarbonEvents';
 import { OnboardingAnswer, OnboardingQuestion } from '@/types/Onboarding';
 
 import {
+  carbonEventsTable,
   initialQuestionOptionsTable,
   initialQuestionsTable,
   onboardingAnswersTable,
@@ -98,4 +100,87 @@ export async function createOrUpdateUser(
 
   console.log('User created:', newUser[0]);
   return newUser[0];
+}
+
+// Server action to fetch user's carbon events
+export async function fetchUserCarbonEvents(userStackAuthId: string) {
+  const user = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.stack_auth_id, userStackAuthId))
+    .limit(1)
+    .execute();
+
+  if (!user.length) {
+    throw new Error('User not found');
+  }
+
+  const userId = user[0].id;
+
+  return db
+    .select()
+    .from(carbonEventsTable)
+    .where(eq(carbonEventsTable.user_id, userId))
+    .execute();
+}
+
+// Server action to create a new carbon event
+export async function createCarbonEvent(
+  userStackAuthId: string,
+  event: CarbonEvent
+) {
+  const user = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.stack_auth_id, userStackAuthId))
+    .limit(1)
+    .execute();
+
+  if (!user.length) {
+    throw new Error('User not found');
+  }
+
+  const userId = user[0].id;
+
+  return db
+    .insert(carbonEventsTable)
+    .values({
+      user_id: userId,
+      type: event.type?.name ?? '',
+      date: new Date(event.date),
+      description: event.description ?? '',
+      carbon_score: event.carbonScore ?? 0,
+      category: event.category ?? '',
+    })
+    .returning();
+}
+
+// Server action to delete a carbon event
+export async function deleteCarbonEvent(eventId: number) {
+  return db
+    .delete(carbonEventsTable)
+    .where(eq(carbonEventsTable.id, eventId))
+    .execute();
+}
+
+// Server action to fetch user's initial question answers
+export async function fetchUserInitialQuestionAnswers(userStackAuthId: string) {
+  const user = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.stack_auth_id, userStackAuthId))
+    .limit(1)
+    .execute();
+
+  if (!user.length) {
+    throw new Error('User not found');
+  }
+
+  const userId = user[0].id;
+
+  return db
+    .select()
+    .from(onboardingAnswersTable)
+    .where(eq(onboardingAnswersTable.user_id, userId))
+    .execute();
 }

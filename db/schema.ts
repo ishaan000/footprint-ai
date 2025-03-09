@@ -41,3 +41,16 @@ export const onboardingAnswersTable = pgTable('onboarding_answers', {
     .references(() => initialQuestionOptionsTable.id, { onDelete: 'cascade' }),
   answered_at: timestamp().defaultNow(),
 });
+
+// Events table definition
+export const carbonEventsTable = pgTable('carbon_events', {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  user_id: integer()
+    .notNull()
+    .references(() => usersTable.id, { onDelete: 'cascade' }),
+  date: timestamp().notNull(),
+  type: varchar({ length: 255 }).notNull(),
+  carbon_score: integer().notNull(),
+  description: varchar({ length: 255 }).notNull(),
+  category: varchar({ length: 255 }).notNull(),
+});

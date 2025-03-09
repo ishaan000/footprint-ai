@@ -2,8 +2,16 @@
 
 import { useCallback, useMemo, useState } from 'react';
 
+import { createCarbonEvent, deleteCarbonEvent } from '@/db';
 import { Add as AddIcon } from '@mui/icons-material';
-import { Box, Container, IconButton, Paper, Typography } from '@mui/material';
+import {
+  Box,
+  Container,
+  IconButton,
+  Paper,
+  Skeleton,
+  Typography,
+} from '@mui/material';
 import { addDays, format, isSameDay, startOfWeek } from 'date-fns';
 
 import type { CarbonEvent } from '@/types/CarbonEvents';
@@ -13,11 +21,17 @@ import { CarbonScoreCard } from './CarbonScoreCard';
 import { EventList } from './EventList';
 import { WeeklyCalendar } from './WeeklyCalendar';
 
-export default function Dashboard() {
+export default function Dashboard({
+  userStackAuthId,
+  initialEvents,
+}: {
+  userStackAuthId: string;
+  initialEvents: CarbonEvent[];
+}) {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [isAddEventOpen, setIsAddEventOpen] = useState(false);
-  const [events, setEvents] = useState<CarbonEvent[]>([]);
-
+  const [events, setEvents] = useState<CarbonEvent[]>(initialEvents);
+  const [loading, setLoading] = useState(false);
   const weekStart = useMemo(
     () => startOfWeek(selectedDate, { weekStartsOn: 1 }),
     [selectedDate]
@@ -34,13 +48,32 @@ export default function Dashboard() {
     [events, selectedDate]
   );
 
-  const handleAddEvent = useCallback((event: CarbonEvent) => {
-    setEvents((prev) => [...prev, event]);
-    setIsAddEventOpen(false);
-  }, []);
+  const handleAddEvent = useCallback(
+    async (event: CarbonEvent) => {
+      try {
+        setLoading(true);
+        const newEvent = await createCarbonEvent(userStackAuthId, event);
+        setEvents((prev) => [...prev, { ...event, id: newEvent[0].id }]);
+        setIsAddEventOpen(false);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [userStackAuthId]
+  );
 
-  const handleDeleteEvent = useCallback((eventId: string) => {
-    setEvents((prev) => prev.filter((event) => event.id !== eventId));
+  const handleDeleteEvent = useCallback(async (eventId: number) => {
+    try {
+      setLoading(true);
+      await deleteCarbonEvent(eventId);
+      setEvents((prev) => prev.filter((event) => event.id !== eventId));
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   // Calculate daily totals for calendar
@@ -56,7 +89,6 @@ export default function Dashboard() {
       ),
     [events, weekDays]
   );
-
   return (
     <Container maxWidth='lg' className='py-4'>
       <Box className='flex flex-col gap-3'>
@@ -81,10 +113,13 @@ export default function Dashboard() {
                 size='small'
                 onClick={() => setIsAddEventOpen(true)}
                 color='primary'
+                disabled={loading}
               >
                 <AddIcon />
               </IconButton>
             </Box>
+
+            {loading && <Skeleton height={200} />}
 
             <EventList
               events={selectedDateEvents}
@@ -104,12 +139,14 @@ export default function Dashboard() {
         </Paper>
 
         {/* Add Event Dialog */}
-        <AddEventDialog
-          open={isAddEventOpen}
-          onClose={() => setIsAddEventOpen(false)}
-          onAdd={handleAddEvent}
-          selectedDate={selectedDate}
-        />
+        {!loading && (
+          <AddEventDialog
+            open={isAddEventOpen}
+            onClose={() => setIsAddEventOpen(false)}
+            onAdd={handleAddEvent}
+            selectedDate={selectedDate}
+          />
+        )}
       </Box>
     </Container>
   );
