@@ -1,8 +1,11 @@
 'use client';
 
 import { Container, Typography } from '@mui/material';
+
+import { Chat } from '@/components/Chat';
+
 import { OnboardingQuestionnaire } from './components/OnboardingQuestionnaire';
-import type { OnboardingQuestion, OnboardingAnswer } from './types/onboarding';
+import type { OnboardingAnswer, OnboardingQuestion } from './types/onboarding';
 
 const onboardingQuestions: OnboardingQuestion[] = [
   {
@@ -13,19 +16,19 @@ const onboardingQuestions: OnboardingQuestion[] = [
       {
         id: 'goal-1',
         label: 'Track my carbon footprint',
-        icon: '🌱'
+        icon: '🌱',
       },
       {
         id: 'goal-2',
         label: 'Reduce energy consumption',
-        icon: '⚡'
+        icon: '⚡',
       },
       {
         id: 'goal-3',
         label: 'Learn about sustainability',
-        icon: '📚'
-      }
-    ]
+        icon: '📚',
+      },
+    ],
   },
   {
     id: '2',
@@ -34,24 +37,24 @@ const onboardingQuestions: OnboardingQuestion[] = [
       {
         id: 'transport-1',
         label: 'Public Transit',
-        icon: '🚌'
+        icon: '🚌',
       },
       {
         id: 'transport-2',
         label: 'Personal Vehicle',
-        icon: '🚗'
+        icon: '🚗',
       },
       {
         id: 'transport-3',
         label: 'Bicycle',
-        icon: '🚲'
+        icon: '🚲',
       },
       {
         id: 'transport-4',
         label: 'Walking',
-        icon: '🚶'
-      }
-    ]
+        icon: '🚶',
+      },
+    ],
   },
   {
     id: '3',
@@ -61,25 +64,25 @@ const onboardingQuestions: OnboardingQuestion[] = [
       {
         id: 'diet-1',
         label: 'Plant-based',
-        icon: '🥬'
+        icon: '🥬',
       },
       {
         id: 'diet-2',
         label: 'Vegetarian',
-        icon: '🥗'
+        icon: '🥗',
       },
       {
         id: 'diet-3',
         label: 'Flexitarian',
-        icon: '🥩'
+        icon: '🥩',
       },
       {
         id: 'diet-4',
         label: 'No dietary restrictions',
-        icon: '🍽️'
-      }
-    ]
-  }
+        icon: '🍽️',
+      },
+    ],
+  },
 ];
 
 export default function Home() {
@@ -92,18 +95,20 @@ export default function Home() {
   };
 
   return (
-    <Container maxWidth="lg" className="py-8">
-      <Typography variant="h3" component="h1" align="center" gutterBottom>
+    <Container maxWidth='lg' className='py-8'>
+      <Typography variant='h3' component='h1' align='center' gutterBottom>
         Welcome to Footprint AI
       </Typography>
-      <Typography variant="h6" align="center" color="text.secondary" paragraph>
+      <Typography variant='h6' align='center' color='text.secondary' paragraph>
         Let's get to know you better to help reduce your carbon footprint
       </Typography>
-      
+
       <OnboardingQuestionnaire
         questions={onboardingQuestions}
         onComplete={handleOnboardingComplete}
       />
+
+      <Chat />
     </Container>
   );
 }
