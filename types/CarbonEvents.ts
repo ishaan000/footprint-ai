@@ -42,35 +42,35 @@ export const CARBON_EVENT_TYPES: CarbonEventType[] = [
     id: 'car-commute',
     name: 'Car Commute',
     category: 'transport',
-    baseScore: 2.3, // Average per 10km
+    baseScore: 3, // Average per 10km
     icon: '🚗',
   },
   {
     id: 'public-transport',
     name: 'Public Transport',
     category: 'transport',
-    baseScore: 0.5, // Average per 10km
+    baseScore: 1, // Average per 10km
     icon: '🚌',
   },
   {
     id: 'meat-meal',
     name: 'Meat-based Meal',
     category: 'food',
-    baseScore: 3.5,
+    baseScore: 4,
     icon: '🥩',
   },
   {
     id: 'vegetarian-meal',
     name: 'Vegetarian Meal',
     category: 'food',
-    baseScore: 1.2,
+    baseScore: 1,
     icon: '🥗',
   },
   {
     id: 'vegan-meal',
     name: 'Vegan Meal',
     category: 'food',
-    baseScore: 0.8,
+    baseScore: 1,
     icon: '🥬',
   },
 ];
