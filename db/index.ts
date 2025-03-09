@@ -99,3 +99,47 @@ export async function createOrUpdateUser(
   console.log('User created:', newUser[0]);
   return newUser[0];
 }
+
+// Server action to fetch user's carbon events
+export async function fetchUserCarbonEvents(userStackAuthId: string) {
+  const user = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.stack_auth_id, userStackAuthId))
+    .limit(1)
+    .execute();
+
+  if (!user.length) {
+    throw new Error('User not found');
+  }
+
+  const userId = user[0].id;
+
+  return db
+    .select()
+    .from(onboardingAnswersTable)
+    .where(eq(onboardingAnswersTable.user_id, userId))
+    .execute();
+}
+
+// Server action to fetch user's initial question answers
+export async function fetchUserInitialQuestionAnswers(userStackAuthId: string) {
+  const user = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.stack_auth_id, userStackAuthId))
+    .limit(1)
+    .execute();
+
+  if (!user.length) {
+    throw new Error('User not found');
+  }
+
+  const userId = user[0].id;
+
+  return db
+    .select()
+    .from(onboardingAnswersTable)
+    .where(eq(onboardingAnswersTable.user_id, userId))
+    .execute();
+}
