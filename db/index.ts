@@ -1,12 +1,18 @@
 import 'dotenv/config';
+import { eq } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/neon-http';
 
-import { OnboardingQuestion } from '@/types/Onboarding';
+import { OnboardingAnswer, OnboardingQuestion } from '@/types/Onboarding';
 
-import { initialQuestionOptionsTable, initialQuestionsTable } from './schema';
+import {
+  initialQuestionOptionsTable,
+  initialQuestionsTable,
+  onboardingAnswersTable,
+} from './schema';
 
 const db = drizzle(process.env.DATABASE_URL!);
 
+// Server action to fetch questions with options for onboarding
 export async function fetchQuestionsWithOptions(): Promise<
   OnboardingQuestion[]
 > {
@@ -25,4 +31,28 @@ export async function fetchQuestionsWithOptions(): Promise<
         label: opt.option,
       })),
   }));
+}
+
+// Server action to save questionnaire answers
+export async function saveOnboardingAnswers(
+  userId: number,
+  answers: OnboardingAnswer[]
+) {
+  // First delete existing answers for the user to allow redoing questionnaire
+  await db
+    .delete(onboardingAnswersTable)
+    .where(eq(onboardingAnswersTable.user_id, userId));
+
+  // Insert new answers
+  await Promise.all(
+    answers.map((answer) =>
+      db.insert(onboardingAnswersTable).values({
+        user_id: userId,
+        question_id: parseInt(answer.questionId),
+        option_id: parseInt(answer.selectedOptionId),
+      })
+    )
+  );
+
+  console.log('Answers saved successfully');
 }
