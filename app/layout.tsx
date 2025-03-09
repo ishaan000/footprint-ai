@@ -47,9 +47,11 @@ export default function RootLayout({
               <ThemeProvider theme={theme}>
                 {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
                 <CssBaseline />
-                <Header />
-                {children}
-                <Footer />
+                <div className='flex min-h-screen flex-col justify-between'>
+                  <Header />
+                  {children}
+                  <Footer />
+                </div>
               </ThemeProvider>
             </AppRouterCacheProvider>
           </StackTheme>
