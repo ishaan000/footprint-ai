@@ -14,8 +14,9 @@ import {
   Typography,
 } from '@mui/material';
 
-import { useOnboardingQuestionnaire } from '../app/hooks/useOnboardingQuestionnaire';
-import { OnboardingQuestion } from '../app/types/onboarding';
+import { useOnboardingQuestionnaire } from '@/hooks/useOnboardingQuestionnaire';
+
+import type { OnboardingQuestionnaireProps } from '@/types/Onboarding';
 
 // Dynamically import Framer Motion components with ssr disabled
 const MotionDiv = dynamic(
@@ -25,13 +26,6 @@ const MotionDiv = dynamic(
   },
   { ssr: false }
 );
-
-interface OnboardingQuestionnaireProps {
-  questions: OnboardingQuestion[];
-  onComplete: (
-    answers: { questionId: string; selectedOptionId: string }[]
-  ) => void;
-}
 
 export const OnboardingQuestionnaire = ({
   questions,

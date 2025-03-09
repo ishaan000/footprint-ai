@@ -3,9 +3,9 @@
 import { Container, Typography } from '@mui/material';
 
 import { Chat } from '@/components/Chat';
+import { OnboardingQuestionnaire } from '@/components/OnboardingQuestionnaire';
 
-import { OnboardingQuestionnaire } from './components/OnboardingQuestionnaire';
-import type { OnboardingAnswer, OnboardingQuestion } from './types/onboarding';
+import type { OnboardingAnswer, OnboardingQuestion } from '../types/Onboarding';
 
 const onboardingQuestions: OnboardingQuestion[] = [
   {

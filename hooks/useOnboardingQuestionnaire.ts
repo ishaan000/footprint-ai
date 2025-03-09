@@ -6,7 +6,7 @@ import type {
   OnboardingAnswer,
   OnboardingQuestion,
   OnboardingState,
-} from '../../types/onboarding';
+} from '../types/Onboarding';
 
 export const useOnboardingQuestionnaire = (questions: OnboardingQuestion[]) => {
   const [state, setState] = useState<OnboardingState>({
