@@ -21,8 +21,3 @@ export interface OnboardingState {
   answers: OnboardingAnswer[];
   isComplete: boolean;
 }
-
-// Props interface for the component
-export interface OnboardingQuestionnaireProps {
-  questions: OnboardingQuestion[];
-}

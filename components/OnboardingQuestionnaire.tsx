@@ -4,6 +4,7 @@ import { useEffect, useState } from 'react';
 
 import dynamic from 'next/dynamic';
 
+import { saveOnboardingAnswers } from '@/db';
 import { ChevronLeft } from '@mui/icons-material';
 import {
   Box,
@@ -16,10 +17,7 @@ import {
 
 import { useOnboardingQuestionnaire } from '@/hooks/useOnboardingQuestionnaire';
 
-import type {
-  OnboardingAnswer,
-  OnboardingQuestionnaireProps,
-} from '@/types/Onboarding';
+import type { OnboardingAnswer, OnboardingQuestion } from '@/types/Onboarding';
 
 // Dynamically import Framer Motion components with ssr disabled
 const MotionDiv = dynamic(
@@ -30,18 +28,21 @@ const MotionDiv = dynamic(
   { ssr: false }
 );
 
-const handleOnboardingComplete = (answers: OnboardingAnswer[]) => {
+const handleOnboardingComplete = (
+  answers: OnboardingAnswer[],
+  stackUserId: string
+) => {
+  saveOnboardingAnswers(stackUserId, answers);
   console.log('Onboarding completed!', answers);
-  // TODO: Implement onboarding completion logic
-  // Here you would typically:
-  // 1. Save the answers to your database
-  // 2. Update the user's profile
-  // 3. Navigate to the next step or dashboard
 };
 
 export const OnboardingQuestionnaire = ({
   questions,
-}: OnboardingQuestionnaireProps) => {
+  stackUserId,
+}: {
+  questions: OnboardingQuestion[];
+  stackUserId: string;
+}) => {
   const [isMounted, setIsMounted] = useState(false);
   const {
     currentQuestion,
@@ -60,9 +61,10 @@ export const OnboardingQuestionnaire = ({
 
   useEffect(() => {
     if (isComplete) {
-      handleOnboardingComplete(answers);
+      handleOnboardingComplete(answers, stackUserId);
+      // TOOD: Redirect or something? Show success message?
     }
-  }, [isComplete, answers]);
+  }, [isComplete, answers, stackUserId]);
 
   if (!isMounted || !currentQuestion) return null;
 
