@@ -13,5 +13,5 @@ export default async function Home() {
       stackUser.primaryEmail ?? ''
     );
   }
-  return <>{/** This page should not really exist */}</>;
+  return <>{/** Dashboard page? */}</>;
 }
