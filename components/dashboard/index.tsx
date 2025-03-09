@@ -129,14 +129,13 @@ export default function Dashboard({
         </Box>
 
         {/* Score Card */}
-        <Paper className='p-3'>
-          <CarbonScoreCard
-            score={selectedDateEvents.reduce(
-              (sum, event) => sum + event.carbonScore,
-              0
-            )}
-          />
-        </Paper>
+        <CarbonScoreCard
+          title={"Today's Carbon Score"}
+          score={selectedDateEvents.reduce(
+            (sum, event) => sum + event.carbonScore,
+            0
+          )}
+        />
 
         {/* Add Event Dialog */}
         {!loading && (

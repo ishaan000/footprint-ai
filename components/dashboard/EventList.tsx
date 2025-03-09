@@ -36,7 +36,7 @@ export function EventList({
               )}
             </Box>
             <Typography variant='body2' color='text.secondary' className='mx-2'>
-              {event.carbonScore.toFixed(1)} kg
+              {event.carbonScore.toFixed(0)} points
             </Typography>
             <IconButton
               size='small'
