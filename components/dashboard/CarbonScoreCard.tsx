@@ -18,7 +18,7 @@ export function CarbonScoreCard({ score }: CarbonScoreCardProps) {
       </Typography>
       <Box className='flex items-baseline gap-2'>
         <Typography variant='h3' component='div' color='primary'>
-          {score.toFixed(1)}
+          {score}
         </Typography>
         <Typography variant='body2' color='text.secondary'>
           points
