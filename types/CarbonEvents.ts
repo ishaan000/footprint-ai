@@ -1,5 +1,5 @@
 export interface CarbonEvent {
-  id: string;
+  id: number;
   type: CarbonEventType;
   date: string; // ISO string
   description?: string;
