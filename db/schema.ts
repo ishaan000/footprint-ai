@@ -1,4 +1,4 @@
-import { integer, pgTable, varchar } from 'drizzle-orm/pg-core';
+import { integer, pgTable, timestamp, varchar } from 'drizzle-orm/pg-core';
 
 // Users table definition
 export const usersTable = pgTable('users', {
@@ -26,4 +26,19 @@ export const initialQuestionOptionsTable = pgTable('initial_question_options', {
   option: varchar({ length: 255 }).notNull(),
   description: varchar({ length: 255 }).notNull(),
   carbon_footprint: integer().notNull(),
+});
+
+// Answers table definition
+export const onboardingAnswersTable = pgTable('onboarding_answers', {
+  id: integer().primaryKey().generatedAlwaysAsIdentity(),
+  user_id: integer()
+    .notNull()
+    .references(() => usersTable.id, { onDelete: 'cascade' }),
+  question_id: integer()
+    .notNull()
+    .references(() => initialQuestionsTable.id, { onDelete: 'cascade' }),
+  option_id: integer()
+    .notNull()
+    .references(() => initialQuestionOptionsTable.id, { onDelete: 'cascade' }),
+  answered_at: timestamp().defaultNow(),
 });
