@@ -23,17 +23,18 @@ export const useOnboardingQuestionnaire = (questions: OnboardingQuestion[]) => {
 
         // Update or add the answer for the current question
         const answerIndex = newAnswers.findIndex(
-          (a: OnboardingAnswer) => a.questionId === currentQuestion.id
+          (a: OnboardingAnswer) =>
+            a.questionId === currentQuestion.id.toString()
         );
 
         if (answerIndex >= 0) {
           newAnswers[answerIndex] = {
-            questionId: currentQuestion.id,
+            questionId: currentQuestion.id.toString(),
             selectedOptionId,
           };
         } else {
           newAnswers.push({
-            questionId: currentQuestion.id,
+            questionId: currentQuestion.id.toString(),
             selectedOptionId,
           });
         }
@@ -72,7 +73,7 @@ export const useOnboardingQuestionnaire = (questions: OnboardingQuestion[]) => {
 
   const currentAnswer = state.answers.find(
     (a: OnboardingAnswer) =>
-      a.questionId === questions[state.currentQuestionIndex]?.id
+      a.questionId === questions[state.currentQuestionIndex]?.id.toString()
   );
 
   return {
