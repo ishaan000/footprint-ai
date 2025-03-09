@@ -7,28 +7,36 @@ import { usersTable } from './schema';
 const db = drizzle(process.env.DATABASE_URL!);
 
 async function main() {
-  const user: typeof usersTable.$inferInsert = {
-    name: 'John',
-    age: 30,
-    email: 'john@example.com',
-  };
+  // Insert a new user
+  const newUser = await db
+    .insert(usersTable)
+    .values({
+      stack_auth_id: 'some_unique_id',
+      name: 'John',
+      age: 30,
+      email: 'john@example.com',
+    })
+    .returning();
 
-  await db.insert(usersTable).values(user);
-  console.log('New user created!');
+  console.log('Inserted user:', newUser);
 
-  const users = await db.select().from(usersTable);
-  console.log('Getting all users from the database: ', users);
-
+  // Update user age by email
   await db
     .update(usersTable)
-    .set({
-      age: 31,
-    })
-    .where(eq(usersTable.email, user.email));
+    .set({ age: 31 })
+    .where(eq(usersTable.email, newUser[0].email));
   console.log('User info updated!');
 
-  await db.delete(usersTable).where(eq(usersTable.email, user.email));
+  // Fetch updated user
+  const updatedUser = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.email, newUser[0].email));
+  console.log('Updated user:', updatedUser);
+
+  // Delete user
+  await db.delete(usersTable).where(eq(usersTable.email, newUser[0].email));
   console.log('User deleted!');
 }
 
-main();
+main().catch(console.error);
