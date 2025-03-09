@@ -155,6 +155,14 @@ export async function createCarbonEvent(
     .returning();
 }
 
+// Server action to delete a carbon event
+export async function deleteCarbonEvent(eventId: number) {
+  return db
+    .delete(carbonEventsTable)
+    .where(eq(carbonEventsTable.id, eventId))
+    .execute();
+}
+
 // Server action to fetch user's initial question answers
 export async function fetchUserInitialQuestionAnswers(userStackAuthId: string) {
   const user = await db
