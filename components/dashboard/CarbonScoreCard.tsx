@@ -7,7 +7,7 @@ interface CarbonScoreCardProps {
 }
 
 export function CarbonScoreCard({ score }: CarbonScoreCardProps) {
-  // Average person's daily carbon footprint is about 22kg CO2
+  // Average person's daily carbon footprint is about 22kg
   const averageDaily = 22;
   const comparison = ((score - averageDaily) / averageDaily) * 100;
 
@@ -21,7 +21,7 @@ export function CarbonScoreCard({ score }: CarbonScoreCardProps) {
           {score.toFixed(1)}
         </Typography>
         <Typography variant='body2' color='text.secondary'>
-          kg CO₂
+          points
         </Typography>
       </Box>
       <Typography

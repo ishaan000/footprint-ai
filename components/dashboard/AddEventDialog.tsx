@@ -89,7 +89,7 @@ export function AddEventDialog({
                     color='text.secondary'
                     className='ml-auto'
                   >
-                    {type.baseScore} kg CO₂
+                    {type.baseScore} points
                   </Typography>
                 </Box>
               </MenuItem>
