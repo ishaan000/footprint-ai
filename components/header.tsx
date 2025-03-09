@@ -1,13 +1,11 @@
 import Link from 'next/link';
 
-import { getUserDetails } from '@/app/actions';
 import { stackServerApp } from '@/stack';
 import { UserButton } from '@stackframe/stack';
 
 export async function Header() {
   const user = await stackServerApp.getUser();
   const app = stackServerApp.urls;
-  const userProfile = await getUserDetails(user?.id);
 
   return (
     <header className='z-10 flex w-full items-center justify-between px-6 py-4'>
@@ -16,19 +14,6 @@ export async function Header() {
       </div>
       {user ? (
         <div className='flex items-center gap-4'>
-          <span className='inline-flex h-8 flex-col items-end'>
-            {userProfile?.name && (
-              <span className='text-[14px] text-gray-600 dark:text-gray-300'>
-                {`Hello, ${userProfile?.name.split(' ')[0]}`}
-              </span>
-            )}
-            <Link
-              href={app.signOut}
-              className='bg-gray-50 px-1 text-[11px] underline hover:no-underline'
-            >
-              Sign Out
-            </Link>
-          </span>
           <UserButton showUserInfo={true} />
         </div>
       ) : (
