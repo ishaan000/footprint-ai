@@ -11,36 +11,35 @@ interface WeeklyCalendarProps {
 }
 
 export function WeeklyCalendar(props: WeeklyCalendarProps) {
-  const { days, dailyTotals, selectedDate, onSelectDate } = props;
+  const { days, selectedDate, onSelectDate } = props;
 
   return (
-    <Box className="grid grid-cols-7 gap-2">
+    <Box className='grid grid-cols-7 gap-2'>
       {days.map((day) => {
         const isSelected = isSameDay(day, selectedDate);
-        const total = dailyTotals[day.toISOString()] || 0;
+        // const total = dailyTotals[day.toISOString()] || 0;
 
         return (
           <Box
             key={day.toISOString()}
-            className={`p-2 rounded-lg cursor-pointer transition-all ${
+            className={`cursor-pointer rounded-lg p-2 transition-all ${
               isSelected
-                ? 'bg-primary-light border border-primary'
+                ? 'bg-primary-light border-primary border'
                 : 'hover:bg-gray-50'
             }`}
             onClick={() => onSelectDate(day)}
           >
-            <Box className="flex flex-col h-full justify-between">
+            <Box className='flex h-full flex-col justify-between'>
               <Box>
-                <Typography variant="caption" className="font-medium block">
+                <Typography variant='caption' className='block font-medium'>
                   {format(day, 'EEE')}
                 </Typography>
-                <Typography variant="body2">{format(day, 'd')}</Typography>
+                <Typography variant='body2'>{format(day, 'd')}</Typography>
               </Box>
-
             </Box>
           </Box>
         );
       })}
     </Box>
   );
-} 
+}
