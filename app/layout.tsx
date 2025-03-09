@@ -11,6 +11,7 @@ import { StackProvider, StackTheme } from '@stackframe/stack';
 
 import '@/app/globals.css';
 
+import Footer from '@/components/footer';
 import { Header } from '@/components/header';
 
 const geistSans = Geist({
@@ -48,6 +49,7 @@ export default function RootLayout({
                 <CssBaseline />
                 <Header />
                 {children}
+                <Footer />
               </ThemeProvider>
             </AppRouterCacheProvider>
           </StackTheme>
