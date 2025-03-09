@@ -2,17 +2,14 @@ import type { Metadata } from 'next';
 
 import { Geist, Geist_Mono } from 'next/font/google';
 
+import { stackServerApp } from '@/stack';
 import theme from '@/theme';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import InitColorSchemeScript from '@mui/material/InitColorSchemeScript';
 import { StackProvider, StackTheme } from '@stackframe/stack';
 
-import './globals.css';
-
-import ModeSwitch from '@/components/ModeSwitch';
-
-import { stackServerApp } from '../stack';
+import '@/app/globals.css';
 
 const geistSans = Geist({
   variable: '--font-geist-sans',
@@ -47,7 +44,6 @@ export default function RootLayout({
               <ThemeProvider theme={theme}>
                 {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
                 <CssBaseline />
-                <ModeSwitch />
                 {children}
               </ThemeProvider>
             </AppRouterCacheProvider>
