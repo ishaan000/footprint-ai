@@ -1,11 +1,15 @@
 import 'dotenv/config';
 import { drizzle } from 'drizzle-orm/neon-http';
 
+import { OnboardingQuestion } from '@/types/Onboarding';
+
 import { initialQuestionOptionsTable, initialQuestionsTable } from './schema';
 
 const db = drizzle(process.env.DATABASE_URL!);
 
-export async function fetchQuestionsWithOptions() {
+export async function fetchQuestionsWithOptions(): Promise<
+  OnboardingQuestion[]
+> {
   const questions = await db.select().from(initialQuestionsTable);
   const options = await db.select().from(initialQuestionOptionsTable);
 
@@ -16,11 +20,9 @@ export async function fetchQuestionsWithOptions() {
     options: options
       .filter((option) => option.question_id === question.id)
       .map((opt) => ({
-        id: opt.id,
+        id: opt.id.toString(),
         icon: opt.icon,
         label: opt.option,
-        description: opt.description,
-        carbon_footprint: opt.carbon_footprint,
       })),
   }));
 }

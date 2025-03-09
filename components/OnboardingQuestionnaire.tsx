@@ -16,7 +16,10 @@ import {
 
 import { useOnboardingQuestionnaire } from '@/hooks/useOnboardingQuestionnaire';
 
-import type { OnboardingQuestionnaireProps } from '@/types/Onboarding';
+import type {
+  OnboardingAnswer,
+  OnboardingQuestionnaireProps,
+} from '@/types/Onboarding';
 
 // Dynamically import Framer Motion components with ssr disabled
 const MotionDiv = dynamic(
@@ -27,9 +30,17 @@ const MotionDiv = dynamic(
   { ssr: false }
 );
 
+const handleOnboardingComplete = (answers: OnboardingAnswer[]) => {
+  console.log('Onboarding completed!', answers);
+  // TODO: Implement onboarding completion logic
+  // Here you would typically:
+  // 1. Save the answers to your database
+  // 2. Update the user's profile
+  // 3. Navigate to the next step or dashboard
+};
+
 export const OnboardingQuestionnaire = ({
   questions,
-  onComplete,
 }: OnboardingQuestionnaireProps) => {
   const [isMounted, setIsMounted] = useState(false);
   const {
@@ -49,9 +60,9 @@ export const OnboardingQuestionnaire = ({
 
   useEffect(() => {
     if (isComplete) {
-      onComplete(answers);
+      handleOnboardingComplete(answers);
     }
-  }, [isComplete, answers, onComplete]);
+  }, [isComplete, answers]);
 
   if (!isMounted || !currentQuestion) return null;
 
