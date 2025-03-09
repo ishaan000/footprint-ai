@@ -4,7 +4,7 @@ import { Container, Typography } from '@mui/material';
 
 import { OnboardingQuestionnaire } from '@/components/OnboardingQuestionnaire';
 
-export default async function Home() {
+export default async function OnboardingPage() {
   const onboardingQuestions = await fetchQuestionsWithOptions();
   const user = await stackServerApp.getUser();
   const userId = user?.id ?? '';

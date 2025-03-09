@@ -1,13 +1,8 @@
-'use client';
+import { stackServerApp } from '@/stack';
 
-import { Container } from '@mui/material';
+export default async function Home() {
+  const stackUser = await stackServerApp.getUser();
+  console.log('Stack User:', stackUser);
 
-import { Chat } from '@/components/Chat';
-
-export default function Home() {
-  return (
-    <Container maxWidth='lg' className='py-8'>
-      <Chat />
-    </Container>
-  );
+  return <>{/** This page should not really exist */}</>;
 }
