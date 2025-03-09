@@ -2,6 +2,8 @@ import NextLink from 'next/link';
 
 import { Box, Container, Link, Typography } from '@mui/material';
 
+import { Chat } from '@/components/Chat';
+
 export default function Home() {
   return (
     <>
@@ -21,6 +23,7 @@ export default function Home() {
           <Link href='/about' color='secondary' component={NextLink}>
             Go to the about page
           </Link>
+          <Chat />
         </Box>
       </Container>
     </>
