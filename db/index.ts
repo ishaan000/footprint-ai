@@ -4,6 +4,7 @@ import 'dotenv/config';
 import { eq } from 'drizzle-orm';
 import { drizzle } from 'drizzle-orm/neon-http';
 
+import { CarbonEvent } from '@/types/CarbonEvents';
 import { OnboardingAnswer, OnboardingQuestion } from '@/types/Onboarding';
 
 import {
@@ -121,6 +122,37 @@ export async function fetchUserCarbonEvents(userStackAuthId: string) {
     .from(carbonEventsTable)
     .where(eq(carbonEventsTable.user_id, userId))
     .execute();
+}
+
+// Server action to create a new carbon event
+export async function createCarbonEvent(
+  userStackAuthId: string,
+  event: CarbonEvent
+) {
+  const user = await db
+    .select()
+    .from(usersTable)
+    .where(eq(usersTable.stack_auth_id, userStackAuthId))
+    .limit(1)
+    .execute();
+
+  if (!user.length) {
+    throw new Error('User not found');
+  }
+
+  const userId = user[0].id;
+
+  return db
+    .insert(carbonEventsTable)
+    .values({
+      user_id: userId,
+      type: event.type?.name ?? '',
+      date: new Date(event.date),
+      description: event.description ?? '',
+      carbon_score: event.carbonScore ?? 0,
+      category: event.category ?? '',
+    })
+    .returning();
 }
 
 // Server action to fetch user's initial question answers
