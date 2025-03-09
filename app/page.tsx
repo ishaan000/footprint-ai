@@ -1,3 +1,5 @@
+import { redirect } from 'next/navigation';
+
 import { createOrUpdateUser } from '@/db';
 import { stackServerApp } from '@/stack';
 import { SignUp } from '@stackframe/stack';
@@ -25,5 +27,5 @@ export default async function Home() {
       stackUser.primaryEmail ?? ''
     );
   }
-  return <>{/** Dashboard page? */}</>;
+  redirect('/dashboard');
 }

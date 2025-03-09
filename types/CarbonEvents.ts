@@ -7,7 +7,7 @@ export interface CarbonEvent {
   category: CarbonEventCategory;
 }
 
-export type CarbonEventCategory = 
+export type CarbonEventCategory =
   | 'transport'
   | 'food'
   | 'energy'
@@ -29,54 +29,54 @@ export const CARBON_EVENT_TYPES: CarbonEventType[] = [
     name: 'Short-haul Flight',
     category: 'transport',
     baseScore: 180, // Average per flight under 3 hours
-    icon: '✈️'
+    icon: '✈️',
   },
   {
     id: 'flight-long',
     name: 'Long-haul Flight',
     category: 'transport',
     baseScore: 900, // Average per long flight
-    icon: '✈️'
+    icon: '✈️',
   },
   {
     id: 'car-commute',
     name: 'Car Commute',
     category: 'transport',
     baseScore: 2.3, // Average per 10km
-    icon: '🚗'
+    icon: '🚗',
   },
   {
     id: 'public-transport',
     name: 'Public Transport',
     category: 'transport',
     baseScore: 0.5, // Average per 10km
-    icon: '🚌'
+    icon: '🚌',
   },
   {
     id: 'meat-meal',
     name: 'Meat-based Meal',
     category: 'food',
     baseScore: 3.5,
-    icon: '🥩'
+    icon: '🥩',
   },
   {
     id: 'vegetarian-meal',
     name: 'Vegetarian Meal',
     category: 'food',
     baseScore: 1.2,
-    icon: '🥗'
+    icon: '🥗',
   },
   {
     id: 'vegan-meal',
     name: 'Vegan Meal',
     category: 'food',
     baseScore: 0.8,
-    icon: '🥬'
-  }
+    icon: '🥬',
+  },
 ];
 
 export interface DailyCarbon {
   date: string;
   totalScore: number;
   events: CarbonEvent[];
-} 
+}

@@ -1,96 +1,60 @@
 'use client';
 
-import { useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
 
-import { Add as AddIcon, Delete as DeleteIcon } from '@mui/icons-material';
+import { Add as AddIcon } from '@mui/icons-material';
 import { Box, Container, IconButton, Paper, Typography } from '@mui/material';
 import { addDays, format, isSameDay, startOfWeek } from 'date-fns';
 
-import { AddEventDialog } from '../../components/dashboard/AddEventDialog';
-import { CarbonScoreCard } from '../../components/dashboard/CarbonScoreCard';
-import { WeeklyCalendar } from '../../components/dashboard/WeeklyCalendar';
-import type { CarbonEvent } from '../types/carbon-events';
+import { AddEventDialog } from '@/components/dashboard/AddEventDialog';
+import { CarbonScoreCard } from '@/components/dashboard/CarbonScoreCard';
+import { WeeklyCalendar } from '@/components/dashboard/WeeklyCalendar';
+import { EventList } from '@/components/EventList';
 
-// Separate component for events list
-function EventsList({
-  events,
-  onDelete,
-}: {
-  events: CarbonEvent[];
-  onDelete: (id: string) => void;
-}) {
-  return (
-    <Box className='space-y-2'>
-      {events.length === 0 ? (
-        <Typography
-          variant='body2'
-          color='text.secondary'
-          className='py-4 text-center'
-        >
-          No events added for this day
-        </Typography>
-      ) : (
-        events.map((event) => (
-          <Box
-            key={event.id}
-            className='flex items-center gap-2 rounded bg-gray-50 p-2'
-          >
-            <span className='text-xl'>{event.type.icon}</span>
-            <Box className='flex-grow'>
-              <Typography variant='body2'>{event.type.name}</Typography>
-              {event.description && (
-                <Typography variant='caption' color='text.secondary'>
-                  {event.description}
-                </Typography>
-              )}
-            </Box>
-            <Typography variant='body2' color='text.secondary' className='mx-2'>
-              {event.carbonScore.toFixed(1)} kg
-            </Typography>
-            <IconButton
-              size='small'
-              onClick={() => onDelete(event.id)}
-              className='text-gray-400 hover:text-red-500'
-            >
-              <DeleteIcon fontSize='small' />
-            </IconButton>
-          </Box>
-        ))
-      )}
-    </Box>
-  );
-}
+import type { CarbonEvent } from '@/types/CarbonEvents';
 
 export default function DashboardPage() {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [isAddEventOpen, setIsAddEventOpen] = useState(false);
   const [events, setEvents] = useState<CarbonEvent[]>([]);
 
-  const weekStart = startOfWeek(selectedDate, { weekStartsOn: 1 });
-  const weekDays = Array.from({ length: 7 }, (_, i) => addDays(weekStart, i));
-
-  // Get events for selected date
-  const selectedDateEvents = events.filter((event) =>
-    isSameDay(new Date(event.date), selectedDate)
+  const weekStart = useMemo(
+    () => startOfWeek(selectedDate, { weekStartsOn: 1 }),
+    [selectedDate]
+  );
+  const weekDays = useMemo(
+    () => Array.from({ length: 7 }, (_, i) => addDays(weekStart, i)),
+    [weekStart]
   );
 
-  const handleAddEvent = (event: CarbonEvent) => {
+  // Get events for selected date
+  const selectedDateEvents = useMemo(
+    () =>
+      events.filter((event) => isSameDay(new Date(event.date), selectedDate)),
+    [events, selectedDate]
+  );
+
+  const handleAddEvent = useCallback((event: CarbonEvent) => {
     setEvents((prev) => [...prev, event]);
     setIsAddEventOpen(false);
-  };
+  }, []);
 
-  const handleDeleteEvent = (eventId: string) => {
+  const handleDeleteEvent = useCallback((eventId: string) => {
     setEvents((prev) => prev.filter((event) => event.id !== eventId));
-  };
+  }, []);
 
   // Calculate daily totals for calendar
-  const dailyTotals = Object.fromEntries(
-    weekDays.map((day) => [
-      day.toISOString(),
-      events
-        .filter((event) => isSameDay(new Date(event.date), day))
-        .reduce((sum, event) => sum + event.carbonScore, 0),
-    ])
+  const dailyTotals = useMemo(
+    () =>
+      Object.fromEntries(
+        weekDays.map((day) => [
+          day.toISOString(),
+          events
+            .filter((event) => isSameDay(new Date(event.date), day))
+            .reduce((sum, event) => sum + event.carbonScore, 0),
+        ])
+      ),
+    [events, weekDays]
   );
 
   return (
@@ -122,7 +86,7 @@ export default function DashboardPage() {
               </IconButton>
             </Box>
 
-            <EventsList
+            <EventList
               events={selectedDateEvents}
               onDelete={handleDeleteEvent}
             />
