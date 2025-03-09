@@ -1,8 +1,8 @@
-import Image from 'next/image';
 import Link from 'next/link';
 
 import { getUserDetails } from '@/app/actions';
 import { stackServerApp } from '@/stack';
+import { UserButton } from '@stackframe/stack';
 
 import ModeSwitch from '@/components/ModeSwitch';
 
@@ -32,15 +32,7 @@ export async function Header() {
               Sign Out
             </Link>
           </span>
-          {userProfile?.raw_json.profile_image_url && (
-            <Image
-              src={userProfile?.raw_json.profile_image_url}
-              alt='User avatar'
-              width={32}
-              height={32}
-              className='rounded-full'
-            />
-          )}
+          <UserButton showUserInfo={true} />
         </div>
       ) : (
         <div className='flex items-center gap-3'>

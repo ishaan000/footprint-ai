@@ -1,13 +1,29 @@
-'use client';
+import { createOrUpdateUser } from '@/db';
+import { stackServerApp } from '@/stack';
+import { SignUp } from '@stackframe/stack';
 
-import { Container } from '@mui/material';
-
-import { Chat } from '@/components/Chat';
-
-export default function Home() {
-  return (
-    <Container maxWidth='lg' className='py-8'>
-      <Chat />
-    </Container>
-  );
+export default async function Home() {
+  const stackUser = await stackServerApp.getUser();
+  if (!stackUser) {
+    // User not signed in, show sign up page
+    return (
+      <SignUp
+        fullPage={true}
+        automaticRedirect={true}
+        firstTab='password'
+        extraInfo={
+          <>
+            By signing up, you agree to our <a href='/terms'>Terms</a>
+          </>
+        }
+      />
+    );
+  } else {
+    await createOrUpdateUser(
+      stackUser.id,
+      stackUser.displayName ?? '',
+      stackUser.primaryEmail ?? ''
+    );
+  }
+  return <>{/** Dashboard page? */}</>;
 }
