@@ -30,5 +30,7 @@ export default async function DashboardPage() {
       CARBON_EVENT_TYPES[0],
   }));
 
-  return <Dashboard initialEvents={initialCarbonEvents} />;
+  return (
+    <Dashboard userStackAuthId={userId} initialEvents={initialCarbonEvents} />
+  );
 }

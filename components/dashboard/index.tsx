@@ -2,6 +2,7 @@
 
 import { useCallback, useMemo, useState } from 'react';
 
+import { createCarbonEvent, deleteCarbonEvent } from '@/db';
 import { Add as AddIcon } from '@mui/icons-material';
 import { Box, Container, IconButton, Paper, Typography } from '@mui/material';
 import { addDays, format, isSameDay, startOfWeek } from 'date-fns';
@@ -14,14 +15,16 @@ import { EventList } from './EventList';
 import { WeeklyCalendar } from './WeeklyCalendar';
 
 export default function Dashboard({
+  userStackAuthId,
   initialEvents,
 }: {
+  userStackAuthId: string;
   initialEvents: CarbonEvent[];
 }) {
   const [selectedDate, setSelectedDate] = useState<Date>(new Date());
   const [isAddEventOpen, setIsAddEventOpen] = useState(false);
   const [events, setEvents] = useState<CarbonEvent[]>(initialEvents);
-
+  const [loading, setLoading] = useState(false);
   const weekStart = useMemo(
     () => startOfWeek(selectedDate, { weekStartsOn: 1 }),
     [selectedDate]
@@ -38,13 +41,32 @@ export default function Dashboard({
     [events, selectedDate]
   );
 
-  const handleAddEvent = useCallback((event: CarbonEvent) => {
-    setEvents((prev) => [...prev, event]);
-    setIsAddEventOpen(false);
-  }, []);
+  const handleAddEvent = useCallback(
+    async (event: CarbonEvent) => {
+      try {
+        setLoading(true);
+        const newEvent = await createCarbonEvent(userStackAuthId, event);
+        setEvents((prev) => [...prev, { ...event, id: newEvent[0].id }]);
+        setIsAddEventOpen(false);
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setLoading(false);
+      }
+    },
+    [userStackAuthId]
+  );
 
-  const handleDeleteEvent = useCallback((eventId: number) => {
-    setEvents((prev) => prev.filter((event) => event.id !== eventId));
+  const handleDeleteEvent = useCallback(async (eventId: number) => {
+    try {
+      setLoading(true);
+      await deleteCarbonEvent(eventId);
+      setEvents((prev) => prev.filter((event) => event.id !== eventId));
+    } catch (error) {
+      console.error(error);
+    } finally {
+      setLoading(false);
+    }
   }, []);
 
   // Calculate daily totals for calendar
@@ -60,6 +82,10 @@ export default function Dashboard({
       ),
     [events, weekDays]
   );
+
+  if (loading) {
+    return <Typography>Loading...</Typography>;
+  }
 
   return (
     <Container maxWidth='lg' className='py-4'>
