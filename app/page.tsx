@@ -1,13 +1,16 @@
-'use client';
+import { createOrUpdateUser } from '@/db';
+import { stackServerApp } from '@/stack';
 
-import { Container } from '@mui/material';
-
-import { Chat } from '@/components/Chat';
-
-export default function Home() {
-  return (
-    <Container maxWidth='lg' className='py-8'>
-      <Chat />
-    </Container>
-  );
+export default async function Home() {
+  const stackUser = await stackServerApp.getUser();
+  if (!stackUser) {
+    // TODO: Redirect to login page
+  } else {
+    await createOrUpdateUser(
+      stackUser.id,
+      stackUser.displayName ?? '',
+      stackUser.primaryEmail ?? ''
+    );
+  }
+  return <>{/** Dashboard page? */}</>;
 }
