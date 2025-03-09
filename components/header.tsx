@@ -4,6 +4,8 @@ import Link from 'next/link';
 import { getUserDetails } from '@/app/actions';
 import { stackServerApp } from '@/stack';
 
+import ModeSwitch from '@/components/ModeSwitch';
+
 export async function Header() {
   const user = await stackServerApp.getUser();
   const app = stackServerApp.urls;
@@ -16,6 +18,7 @@ export async function Header() {
       </div>
       {user ? (
         <div className='flex items-center gap-4'>
+          <ModeSwitch />
           <span className='inline-flex h-8 flex-col items-end'>
             {userProfile?.name && (
               <span className='text-[14px] text-gray-600 dark:text-gray-300'>
@@ -41,6 +44,7 @@ export async function Header() {
         </div>
       ) : (
         <div className='flex items-center gap-3'>
+          <ModeSwitch />
           <Link
             href={app.signIn}
             className='inline-flex h-8 items-center justify-center rounded-md px-4 text-[13px] font-medium text-gray-700 transition-all hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800'
