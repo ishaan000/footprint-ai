@@ -3,6 +3,7 @@
 import { useEffect, useState } from 'react';
 
 import dynamic from 'next/dynamic';
+import { useRouter } from 'next/navigation';
 
 import { saveOnboardingAnswers } from '@/db';
 import { ChevronLeft } from '@mui/icons-material';
@@ -43,6 +44,7 @@ export const OnboardingQuestionnaire = ({
   questions: OnboardingQuestion[];
   stackUserId: string;
 }) => {
+  const router = useRouter();
   const [isMounted, setIsMounted] = useState(false);
   const {
     currentQuestion,
@@ -62,9 +64,9 @@ export const OnboardingQuestionnaire = ({
   useEffect(() => {
     if (isComplete) {
       handleOnboardingComplete(answers, stackUserId);
-      // TOOD: Redirect or something? Show success message?
+      router.push('/dashboard');
     }
-  }, [isComplete, answers, stackUserId]);
+  }, [isComplete, answers, stackUserId, router]);
 
   if (!isMounted || !currentQuestion) return null;
 
