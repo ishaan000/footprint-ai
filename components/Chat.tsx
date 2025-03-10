@@ -2,11 +2,13 @@
 
 import { FormEvent, useState } from 'react';
 
+import Link from 'next/link';
+
 import { useChat } from '../hooks/useChat';
 
 export function Chat() {
   const [input, setInput] = useState('');
-  const { messages, isLoading, error, sendMessage } = useChat();
+  const { messages, isLoading, error, sendMessage, points } = useChat();
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
@@ -21,9 +23,14 @@ export function Chat() {
   };
 
   return (
-    <div className='mx-auto flex h-[600px] w-full max-w-2xl flex-col'>
+    <div className='mx-auto flex h-[600px] w-full max-w-2xl flex-col rounded-lg border border-gray-300 shadow-lg'>
+      {/* ✅ Total Points Earned Display */}
+      <div className='bg-green-100 p-3 text-center font-semibold text-green-800'>
+        🌍 **Total Points Earned:** {points} Points 🌱
+      </div>
+
       {/* Messages Container */}
-      <div className='flex-1 space-y-4 overflow-y-auto p-4'>
+      <div className='flex-1 space-y-4 overflow-y-auto bg-white p-4'>
         {messages.map((message, index) => (
           <div
             key={index}
@@ -37,9 +44,8 @@ export function Chat() {
                   ? 'bg-blue-500 text-white'
                   : 'bg-gray-200 text-gray-800'
               }`}
-            >
-              {message.content}
-            </div>
+              dangerouslySetInnerHTML={{ __html: message.content }} // ✅ Render formatted AI response
+            ></div>
           </div>
         ))}
         {isLoading && (
@@ -55,13 +61,13 @@ export function Chat() {
       </div>
 
       {/* Input Form */}
-      <form onSubmit={handleSubmit} className='border-t p-4'>
+      <form onSubmit={handleSubmit} className='border-t bg-gray-100 p-4'>
         <div className='flex gap-2'>
           <input
             type='text'
             value={input}
             onChange={(e) => setInput(e.target.value)}
-            placeholder='Type your message...'
+            placeholder='Enter a sustainable action...'
             className='flex-1 rounded-lg border p-2 focus:ring-2 focus:ring-blue-500 focus:outline-none'
             disabled={isLoading}
           />
@@ -72,6 +78,14 @@ export function Chat() {
           >
             Send
           </button>
+        </div>
+        <div className='mt-4 text-center'>
+          <Link
+            href='/dashboard'
+            className='text-blue-500 underline hover:text-blue-600'
+          >
+            View your sustainability dashboard
+          </Link>
         </div>
       </form>
     </div>
