@@ -14,6 +14,12 @@ export async function Header() {
       </div>
       {user ? (
         <div className='flex items-center gap-4'>
+          <Link
+            href={'/chat'}
+            className='inline-flex h-8 items-center justify-center rounded-md px-4 text-[13px] font-medium text-gray-700 transition-all hover:bg-gray-50 dark:text-gray-300 dark:hover:bg-gray-800'
+          >
+            Chat
+          </Link>
           <UserButton showUserInfo={true} />
         </div>
       ) : (
