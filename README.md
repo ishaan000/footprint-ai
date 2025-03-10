@@ -17,7 +17,7 @@
 |-------------|------------|
 | **Next.js 15**  | React-based frontend framework for fast performance |
 | **TypeScript**  | Strongly-typed JavaScript for better scalability |
-| **Groq API**  | AI-powered chat system replacing OpenAI |
+| **Groq API**  | AI-powered chat system |
 | **Material UI**  | Beautiful, accessible UI components |
 | **Redis**  | Efficient session management & caching |
 | **PostgreSQL**  | Storing user activity and progress |
