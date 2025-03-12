@@ -3,7 +3,7 @@
 import { useCallback, useMemo, useState } from 'react';
 
 import { createCarbonEvent, deleteCarbonEvent } from '@/db';
-import { Add as AddIcon } from '@mui/icons-material';
+import { Add as AddIcon, ExpandLess, ExpandMore } from '@mui/icons-material';
 import {
   Box,
   Container,
@@ -34,6 +34,7 @@ export default function Dashboard({
   const [isAddEventOpen, setIsAddEventOpen] = useState(false);
   const [events, setEvents] = useState<CarbonEvent[]>(initialEvents);
   const [loading, setLoading] = useState(false);
+  const [isEventsMinimized, setIsEventsMinimized] = useState(true);
   const weekStart = useMemo(
     () => startOfWeek(selectedDate, { weekStartsOn: 1 }),
     [selectedDate]
@@ -98,11 +99,17 @@ export default function Dashboard({
     [events]
   );
 
+  // Calculate daily points for the plant animation
+  const dailyPoints = useMemo(
+    () => selectedDateEvents.reduce((sum, event) => sum + event.carbonScore, 0),
+    [selectedDateEvents]
+  );
+
   return (
     <Container maxWidth='lg' className='py-4'>
       <div className='relative mb-8 flex justify-center'>
         <div className='h-[240px] w-[240px]'>
-          <GrowingPlant points={totalPoints} className='h-full w-full' />
+          <GrowingPlant points={dailyPoints} className='h-full w-full' />
         </div>
       </div>
       <Box className='flex flex-col gap-3'>
@@ -123,33 +130,55 @@ export default function Dashboard({
               <Typography variant='subtitle1'>
                 {format(selectedDate, 'EEEE, MMMM d')}
               </Typography>
-              <IconButton
-                size='small'
-                onClick={() => setIsAddEventOpen(true)}
-                color='primary'
-                disabled={loading}
-              >
-                <AddIcon />
-              </IconButton>
+              <Box className='flex items-center gap-2'>
+                <IconButton
+                  size='small'
+                  onClick={() => setIsEventsMinimized(!isEventsMinimized)}
+                  color='inherit'
+                >
+                  {isEventsMinimized ? (
+                    <ExpandMore fontSize='small' />
+                  ) : (
+                    <ExpandLess fontSize='small' />
+                  )}
+                </IconButton>
+                <IconButton
+                  size='small'
+                  onClick={() => setIsAddEventOpen(true)}
+                  color='primary'
+                  disabled={loading}
+                >
+                  <AddIcon />
+                </IconButton>
+              </Box>
             </Box>
 
             {loading && <Skeleton height={200} />}
 
-            <EventList
-              events={selectedDateEvents}
-              onDelete={handleDeleteEvent}
-            />
+            {isEventsMinimized ? (
+              <Typography
+                variant='body2'
+                color='text.secondary'
+                className='text-center italic'
+              >
+                {selectedDateEvents.length > 0
+                  ? `${selectedDateEvents.length} event${selectedDateEvents.length !== 1 ? 's' : ''} recorded - Click ↓ to view`
+                  : 'No events yet - Click + to log your first sustainable action!'}
+              </Typography>
+            ) : (
+              <EventList
+                events={selectedDateEvents}
+                onDelete={handleDeleteEvent}
+              />
+            )}
           </Paper>
         </Box>
 
-        {/* Score Card */}
-        <CarbonScoreCard
-          title={"Today's Carbon Score"}
-          score={selectedDateEvents.reduce(
-            (sum, event) => sum + event.carbonScore,
-            0
-          )}
-        />
+        {/* Score Cards */}
+        <Box className='grid grid-cols-2 gap-3'>
+          <CarbonScoreCard title={"Today's Carbon Score"} score={dailyPoints} />
+          <CarbonScoreCard title={'Total Carbon Score'} score={totalPoints} />
+        </Box>
 
         {/* Add Event Dialog */}
         {!loading && (

@@ -2,7 +2,7 @@
 
 import { Roboto } from 'next/font/google';
 
-import { createTheme } from '@mui/material/styles';
+import { createTheme, ThemeOptions } from '@mui/material/styles';
 
 const roboto = Roboto({
   weight: ['300', '400', '500', '700'],
@@ -10,7 +10,8 @@ const roboto = Roboto({
   display: 'swap',
 });
 
-const theme = createTheme({
+// Force light mode configuration
+const lightModeOptions: ThemeOptions = {
   palette: {
     mode: 'light',
     primary: {
@@ -32,6 +33,19 @@ const theme = createTheme({
     fontFamily: roboto.style.fontFamily,
   },
   components: {
+    MuiCssBaseline: {
+      styleOverrides: {
+        '@media (prefers-color-scheme: dark)': {
+          'html, body': {
+            backgroundColor: '#ffffff',
+            color: '#000000',
+          },
+        },
+        html: {
+          colorScheme: 'light',
+        },
+      },
+    },
     MuiAlert: {
       styleOverrides: {
         root: {
@@ -53,7 +67,33 @@ const theme = createTheme({
         },
       },
     },
+    MuiPaper: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#ffffff',
+          color: '#000000',
+        },
+      },
+    },
+    MuiCard: {
+      styleOverrides: {
+        root: {
+          backgroundColor: '#ffffff',
+          color: '#000000',
+        },
+      },
+    },
+    MuiDialog: {
+      styleOverrides: {
+        paper: {
+          backgroundColor: '#ffffff',
+          color: '#000000',
+        },
+      },
+    },
   },
-});
+};
+
+const theme = createTheme(lightModeOptions);
 
 export default theme;

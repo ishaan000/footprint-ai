@@ -7,6 +7,7 @@ import theme from '@/theme';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
 import { StackProvider, StackTheme } from '@stackframe/stack';
+import { ThemeProvider as NextThemesProvider } from 'next-themes';
 
 import '@/app/globals.css';
 
@@ -35,24 +36,38 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en'>
+    <html
+      lang='en'
+      suppressHydrationWarning
+      data-mui-color-scheme='light'
+      className='light'
+    >
       <body
-        className={`${geistSans.variable} ${geistMono.variable} antialiased`}
+        className={`${geistSans.variable} ${geistMono.variable} light antialiased`}
+        data-theme='light'
       >
-        <StackProvider app={stackServerApp}>
-          <StackTheme>
-            <AppRouterCacheProvider options={{ enableCssLayer: true }}>
-              <ThemeProvider theme={theme}>
-                <CssBaseline />
-                <div className='flex min-h-screen flex-col justify-between'>
-                  <Header />
-                  {children}
-                  <Footer />
-                </div>
-              </ThemeProvider>
-            </AppRouterCacheProvider>
-          </StackTheme>
-        </StackProvider>
+        <NextThemesProvider
+          attribute='class'
+          defaultTheme='light'
+          enableSystem={false}
+          forcedTheme='light'
+          themes={['light']}
+        >
+          <StackProvider app={stackServerApp}>
+            <StackTheme>
+              <AppRouterCacheProvider options={{ enableCssLayer: true }}>
+                <ThemeProvider theme={theme}>
+                  <CssBaseline />
+                  <div className='flex min-h-screen flex-col justify-between'>
+                    <Header />
+                    {children}
+                    <Footer />
+                  </div>
+                </ThemeProvider>
+              </AppRouterCacheProvider>
+            </StackTheme>
+          </StackProvider>
+        </NextThemesProvider>
       </body>
     </html>
   );

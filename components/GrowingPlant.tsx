@@ -8,35 +8,35 @@ interface GrowingPlantProps {
 }
 
 export function GrowingPlant({ points, className = '' }: GrowingPlantProps) {
-  // Calculate growth percentage (max at 1000 points)
+  // Calculate growth percentage (max at 100 points)
   const growthPercent = useMemo(
-    () => Math.min((points / 1000) * 100, 100),
+    () => Math.min((points / 100) * 100, 100),
     [points]
   );
 
   // Calculate plant color based on points
   const plantColor = useMemo(() => {
-    if (points >= 1000) return '#1b4d1b'; // Full tree - deep forest green
-    if (points >= 500) return '#2d5a27'; // Big plant - mature green
-    if (points >= 200) return '#3e8948'; // Medium plant - vibrant green
-    if (points >= 50) return '#66b032'; // Small plant - young green
-    return '#98bf64'; // Seed/sprout - light green
+    if (points >= 100) return '#2d6a4f'; // Full bloom - rich forest green
+    if (points >= 75) return '#40916c'; // Almost there - mature green
+    if (points >= 50) return '#52b788'; // Halfway - vibrant green
+    if (points >= 25) return '#74c69d'; // Starting - young green
+    return '#95d5b2'; // Seed/sprout - light green
   }, [points]);
 
   const leafColor = useMemo(() => {
     // Slightly lighter variant of plantColor for leaves
-    if (points >= 1000) return '#2d5a27';
-    if (points >= 500) return '#3e8948';
-    if (points >= 200) return '#66b032';
-    if (points >= 50) return '#98bf64';
-    return '#bad87f';
+    if (points >= 100) return '#40916c';
+    if (points >= 75) return '#52b788';
+    if (points >= 50) return '#74c69d';
+    if (points >= 25) return '#95d5b2';
+    return '#b7e4c7';
   }, [points]);
 
   return (
     <div className={`relative flex flex-col items-center gap-2 ${className}`}>
       {/* Points display */}
       <div className='rounded-full bg-[#00e5bf] px-3 py-1 text-xs font-semibold text-black'>
-        {points} Points
+        {points}/100 Daily Points
       </div>
 
       {/* Plant SVG */}
@@ -50,7 +50,7 @@ export function GrowingPlant({ points, className = '' }: GrowingPlantProps) {
         {/* Rich soil with texture */}
         <path
           d='M10,85 Q30,82 50,85 Q70,88 90,85 L90,95 L10,95 Z'
-          fill='#3e2723'
+          fill='#40241a'
           opacity='0.9'
         />
         <path
@@ -61,98 +61,125 @@ export function GrowingPlant({ points, className = '' }: GrowingPlantProps) {
           opacity='0.7'
         />
 
-        {/* Plant growth container */}
+        {/* Plant growth container with faster animation */}
         <g
           transform={`scale(${0.3 + (growthPercent * 0.7) / 100}, ${0.3 + (growthPercent * 0.7) / 100})`}
-          style={{ transformOrigin: '50px 85px' }}
+          style={{
+            transformOrigin: '50px 85px',
+            transition: 'transform 0.3s ease-out',
+          }}
         >
-          {/* Main stem structure - grows organically */}
+          {/* Main stem structure - more natural curve */}
           <path
             d={`M50,85 C50,${85 - growthPercent * 0.6} 
-                ${45 + Math.sin(growthPercent * 0.1) * 10},${55 - growthPercent * 0.4} 
-                ${48 + Math.sin(growthPercent * 0.05) * 5},${25}`}
+                ${48 + Math.sin(growthPercent * 0.05) * 8},${60 - growthPercent * 0.4} 
+                ${48 + Math.sin(growthPercent * 0.03) * 4},${30}`}
             fill='none'
             stroke={plantColor}
-            strokeWidth='4'
+            strokeWidth='3'
             strokeLinecap='round'
+            style={{ transition: 'all 0.3s ease-out' }}
           />
+
+          {points >= 25 && (
+            <>
+              {/* First set of leaves - more natural */}
+              <path
+                d={`M50,75 
+                   Q35,70 30,80 
+                   Q40,70 50,75
+                   M50,75
+                   Q65,70 70,80
+                   Q60,70 50,75`}
+                fill={leafColor}
+                stroke={plantColor}
+                strokeWidth='1'
+                opacity='0.9'
+                style={{ transition: 'all 0.3s ease-out' }}
+              />
+            </>
+          )}
 
           {points >= 50 && (
             <>
-              {/* First set of leaves */}
+              {/* Second set of leaves - more dynamic */}
               <path
-                d={`M50,70 
-                   Q40,65 35,70 
-                   Q38,68 42,69
-                   M50,70
-                   Q60,65 65,70
-                   Q62,68 58,69`}
+                d={`M48,60 
+                   Q30,55 25,70 
+                   Q35,55 48,60
+                   M52,60
+                   Q70,55 75,70
+                   Q65,55 52,60`}
                 fill={leafColor}
                 stroke={plantColor}
                 strokeWidth='1'
                 opacity='0.9'
+                style={{ transition: 'all 0.3s ease-out' }}
               />
             </>
           )}
 
-          {points >= 200 && (
+          {points >= 75 && (
             <>
-              {/* Second set of leaves */}
+              {/* Third set of leaves - elegant curves */}
               <path
-                d={`M48,55 
-                   Q35,50 30,60 
-                   Q34,53 40,54
-                   M52,55
-                   Q65,50 70,60
-                   Q66,53 60,54`}
+                d={`M48,45 
+                   Q25,40 20,60 
+                   Q30,42 48,45
+                   M52,45
+                   Q75,40 80,60
+                   Q70,42 52,45`}
                 fill={leafColor}
                 stroke={plantColor}
                 strokeWidth='1'
                 opacity='0.9'
+                style={{ transition: 'all 0.3s ease-out' }}
               />
             </>
           )}
 
-          {points >= 500 && (
+          {points >= 100 && (
             <>
-              {/* Third set of leaves - more complex */}
-              <path
-                d={`M47,40 
-                   Q30,35 25,50 
-                   Q28,40 35,39
-                   M53,40
-                   Q70,35 75,50
-                   Q72,40 65,39`}
-                fill={leafColor}
-                stroke={plantColor}
-                strokeWidth='1'
-                opacity='0.9'
-              />
-            </>
-          )}
+              {/* Sunflower */}
+              <g transform='translate(45,25)'>
+                {/* Petals */}
+                {Array.from({ length: 12 }).map((_, i) => (
+                  <path
+                    key={i}
+                    d={`M0,0 Q4,-3 0,-12 Q-4,-3 0,0`}
+                    fill='#FFA500'
+                    stroke='#FF8C00'
+                    strokeWidth='0.5'
+                    transform={`rotate(${i * 30})`}
+                    style={{ transition: 'all 0.3s ease-out' }}
+                  />
+                ))}
 
-          {points >= 1000 && (
-            <>
-              {/* Tree crown with detailed foliage */}
+                {/* Center of the flower */}
+                <circle
+                  r='6'
+                  fill='#FFD700'
+                  stroke='#DAA520'
+                  strokeWidth='0.5'
+                />
+
+                {/* Center texture */}
+                <circle r='4.5' fill='#B8860B' fillOpacity='0.3' />
+              </g>
+
+              {/* Additional leaves near flower */}
               <path
-                d={`M50,25 
-                   Q35,20 30,35 
-                   Q25,25 35,15
-                   Q45,5 50,10
-                   Q55,5 65,15
-                   Q75,25 70,35
-                   Q65,20 50,25`}
+                d={`M40,30 
+                   Q30,28 25,35 
+                   Q33,30 40,30
+                   M50,30
+                   Q60,28 65,35
+                   Q57,30 50,30`}
                 fill={leafColor}
                 stroke={plantColor}
                 strokeWidth='1'
                 opacity='0.9'
-              />
-              <path
-                d={`M40,20 Q50,15 60,20`}
-                fill='none'
-                stroke={plantColor}
-                strokeWidth='1'
-                opacity='0.7'
+                style={{ transition: 'all 0.3s ease-out' }}
               />
             </>
           )}

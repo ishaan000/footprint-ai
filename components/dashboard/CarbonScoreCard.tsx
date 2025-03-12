@@ -8,16 +8,23 @@ interface CarbonScoreCardProps {
 }
 
 export function CarbonScoreCard({ score, title }: CarbonScoreCardProps) {
-  const averageDaily = 100; // Average person's daily points would be 100 (just a random number)
-  const comparison = ((score - averageDaily) / averageDaily) * 100;
+  // Use different baselines for daily vs total scores
+  const isTotal = title.toLowerCase().includes('total');
+  const baseline = isTotal ? 700 : 100; // 700 for weekly total (100 * 7 days), 100 for daily
+  const comparison = ((score - baseline) / baseline) * 100;
 
   return (
     <Paper className='p-4'>
       <Typography variant='subtitle2' color='text.secondary' gutterBottom>
         {title}
       </Typography>
-      <Box className='flex items-baseline gap-2'>
-        <Typography variant='h3' component='div' color='primary'>
+      <Box className='flex flex-col'>
+        <Typography
+          variant='h2'
+          component='div'
+          className='text-[#0066ff]'
+          sx={{ fontWeight: 500 }}
+        >
           {score}
         </Typography>
         <Typography variant='body2' color='text.secondary'>
@@ -25,9 +32,9 @@ export function CarbonScoreCard({ score, title }: CarbonScoreCardProps) {
         </Typography>
       </Box>
       <Typography
-        variant='caption'
-        color={comparison < 0 ? 'error' : 'success'}
-        className='mt-1 block'
+        variant='body2'
+        className={`mt-1 block ${comparison > 0 ? 'text-[#00A651]' : 'text-[#FF0000]'}`}
+        sx={{ fontWeight: 500 }}
       >
         {comparison > 0
           ? `${comparison.toFixed(0)}% above average`

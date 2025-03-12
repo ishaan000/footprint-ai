@@ -1,8 +1,8 @@
 'use client';
 
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 
-import { createCarbonEvent } from '@/db';
+import { createCarbonEvent, fetchUserCarbonEvents } from '@/db';
 
 import { CARBON_EVENT_TYPES, CarbonEvent } from '@/types/CarbonEvents';
 
@@ -12,9 +12,6 @@ interface Message {
 }
 
 interface ChatOptions {
-  model?: string;
-  temperature?: number;
-  maxTokens?: number;
   userStackAuthId: string;
 }
 
@@ -24,59 +21,155 @@ export function useChat(options: ChatOptions) {
   const [error, setError] = useState<string | null>(null);
   const [points, setPoints] = useState<number>(0);
 
-  // ✅ Improved list of sustainability-related keywords
-  const measurableKeywords = [
-    'reusable',
-    'recycle',
-    'carpool',
-    'bike',
-    'solar',
-    'compost',
-    'LED',
-    'low-flow',
-    'fix leaks',
-    'plant-based',
-    'greywater',
-    'public transport',
-    'reduce waste',
-    'energy-efficient',
-    'walk',
-    'bus',
-  ];
+  // Initialize points from user's events
+  useEffect(() => {
+    const initializePoints = async () => {
+      try {
+        const userEvents = await fetchUserCarbonEvents(options.userStackAuthId);
+        const totalPoints = userEvents.reduce(
+          (sum, event) => sum + event.carbon_score,
+          0
+        );
+        setPoints(totalPoints);
+      } catch (error) {
+        console.error('Failed to fetch user events:', error);
+      }
+    };
 
-  // ✅ Check if the user's message contains a sustainability-related action
-  const isMeasurableAction = (userMessage: string): boolean => {
-    return measurableKeywords.some((keyword) =>
-      userMessage.toLowerCase().includes(keyword)
-    );
+    initializePoints();
+  }, [options.userStackAuthId]);
+
+  // Map keywords to event types for consistent scoring
+  const keywordToEventType: Record<string, string> = {
+    // Transport
+    'public transport': 'public-transport',
+    'public transportation': 'public-transport',
+    bus: 'public-transport',
+    train: 'public-transport',
+    subway: 'public-transport',
+    metro: 'public-transport',
+    bike: 'bike-commute',
+    bicycle: 'bike-commute',
+    walk: 'bike-commute',
+    walking: 'bike-commute',
+    carpool: 'public-transport',
+    rideshare: 'public-transport',
+
+    // Food
+    vegan: 'vegan-meal',
+    'plant-based': 'vegan-meal',
+    vegetarian: 'vegetarian-meal',
+    meatless: 'vegetarian-meal',
+    'local food': 'local-food',
+    'farmers market': 'local-food',
+    'food waste': 'food-waste',
+    'composting food': 'food-waste',
+    leftovers: 'food-waste',
+
+    // Energy
+    solar: 'electricity-renewable',
+    'wind power': 'electricity-renewable',
+    renewable: 'electricity-renewable',
+    led: 'energy-efficiency',
+    'energy efficient': 'energy-efficiency',
+    'smart thermostat': 'energy-efficiency',
+    insulation: 'energy-efficiency',
+    'temperature adjustment': 'heating-reduction',
+    thermostat: 'heating-reduction',
+
+    // Shopping
+    secondhand: 'secondhand-purchase',
+    thrift: 'secondhand-purchase',
+    used: 'secondhand-purchase',
+    'eco-friendly': 'eco-product',
+    'sustainable product': 'eco-product',
+    'green product': 'eco-product',
+
+    // Waste
+    recycle: 'recycling',
+    recycling: 'recycling',
+    compost: 'composting',
+    composting: 'composting',
+    'zero waste': 'zero-waste',
+    'bulk shopping': 'zero-waste',
+    reusable: 'plastic-reduction',
+    'plastic free': 'plastic-reduction',
+    'single-use': 'plastic-reduction',
+
+    // Water
+    'water saving': 'water-conservation',
+    'low-flow': 'water-conservation',
+    'fix leak': 'water-conservation',
+    'shorter shower': 'water-conservation',
+    rainwater: 'rainwater-collection',
+    'rain barrel': 'rainwater-collection',
+    'water collection': 'rainwater-collection',
   };
 
-  // ✅ Function to assign points for valid sustainable actions
+  // Check if the user's message contains a sustainability-related action
+  const findMatchingEventType = (userMessage: string): string | null => {
+    const lowercaseMessage = userMessage.toLowerCase();
+
+    // First, try exact phrase matches
+    for (const [keyword, eventTypeId] of Object.entries(keywordToEventType)) {
+      if (lowercaseMessage.includes(keyword)) {
+        return eventTypeId;
+      }
+    }
+
+    // Then try to match parts of compound keywords
+    const words = lowercaseMessage.split(/\s+/);
+    for (const word of words) {
+      for (const [keyword, eventTypeId] of Object.entries(keywordToEventType)) {
+        if (keyword.split(/\s+/).includes(word)) {
+          return eventTypeId;
+        }
+      }
+    }
+
+    return null;
+  };
+
+  // Calculate points based on event type base scores
   const calculatePoints = (userMessage: string): number => {
-    if (!isMeasurableAction(userMessage)) {
+    const eventTypeId = findMatchingEventType(userMessage);
+    if (!eventTypeId) {
       console.log(`❌ No points awarded: "${userMessage}" is not measurable.`);
       return 0;
     }
-    const pointsAwarded = Math.floor(Math.random() * 10) + 5;
-    console.log(`✅ Earned ${pointsAwarded} points for: "${userMessage}"`);
-    return pointsAwarded;
+
+    const eventType = CARBON_EVENT_TYPES.find(
+      (type) => type.id === eventTypeId
+    );
+    if (!eventType) {
+      console.log(`❌ No event type found for: "${eventTypeId}"`);
+      return 0;
+    }
+
+    console.log(
+      `✅ Earned ${eventType.baseScore} points for: "${userMessage}" (${eventType.name})`
+    );
+    return eventType.baseScore;
   };
 
-  // ✅ Function to log chat points as carbon events
+  // Log chat points as carbon events
   const logChatPoints = async (userMessage: string, pointsAwarded: number) => {
     try {
-      const chatEventType = CARBON_EVENT_TYPES.find(
-        (t) => t.id === 'chat-sustainable-action'
+      const eventTypeId = findMatchingEventType(userMessage);
+      if (!eventTypeId) return;
+
+      const eventType = CARBON_EVENT_TYPES.find(
+        (type) => type.id === eventTypeId
       );
-      if (!chatEventType) return;
+      if (!eventType) return;
 
       const event: CarbonEvent = {
         id: 0,
-        type: chatEventType,
+        type: eventType,
         date: new Date().toISOString(),
         description: `Chat: ${userMessage}`,
         carbonScore: pointsAwarded,
-        category: 'other',
+        category: eventType.category,
       };
 
       await createCarbonEvent(options.userStackAuthId, event);
@@ -106,7 +199,7 @@ export function useChat(options: ChatOptions) {
       setIsLoading(true);
       setError(null);
 
-      // ✅ Calculate points for the user action
+      // Calculate points for the user action
       const pointsForAction = calculatePoints(content);
       if (pointsForAction > 0) {
         setPoints((prev) => prev + pointsForAction);
@@ -141,7 +234,7 @@ export function useChat(options: ChatOptions) {
 
       const updatedMessages = [...newMessages, formattedMessage];
 
-      // ✅ Append points message ONLY if the action was valid
+      // Append points message ONLY if the action was valid
       if (pointsForAction > 0) {
         updatedMessages.push({
           role: 'assistant' as const,

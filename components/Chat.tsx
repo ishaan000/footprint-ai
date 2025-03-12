@@ -28,6 +28,10 @@ export function Chat({ userStackAuthId }: ChatProps) {
     }
   };
 
+  const handleExampleClick = (example: string) => {
+    setInput(example);
+  };
+
   return (
     <div className='mx-auto flex h-[600px] w-full max-w-2xl flex-col rounded-lg border border-gray-200 bg-white shadow-lg'>
       {/* Points Display */}
@@ -99,6 +103,41 @@ export function Chat({ userStackAuthId }: ChatProps) {
           >
             Send
           </button>
+        </div>
+        <div className='mt-2 text-center text-sm text-gray-500'>
+          <p className='mb-1'>Try saying:</p>
+          <div className='flex flex-wrap justify-center gap-2'>
+            <button
+              type='button'
+              onClick={() => handleExampleClick('I took the bus today')}
+              className='rounded-full bg-gray-100 px-3 py-1 text-xs transition-colors hover:bg-gray-200'
+            >
+              &ldquo;I took the bus today&rdquo;
+            </button>
+            <button
+              type='button'
+              onClick={() => handleExampleClick('Had a vegetarian lunch')}
+              className='rounded-full bg-gray-100 px-3 py-1 text-xs transition-colors hover:bg-gray-200'
+            >
+              &ldquo;Had a vegetarian lunch&rdquo;
+            </button>
+            <button
+              type='button'
+              onClick={() =>
+                handleExampleClick('Used my reusable water bottle')
+              }
+              className='rounded-full bg-gray-100 px-3 py-1 text-xs transition-colors hover:bg-gray-200'
+            >
+              &ldquo;Used my reusable water bottle&rdquo;
+            </button>
+            <button
+              type='button'
+              onClick={() => handleExampleClick('Installed LED lights')}
+              className='rounded-full bg-gray-100 px-3 py-1 text-xs transition-colors hover:bg-gray-200'
+            >
+              &ldquo;Installed LED lights&rdquo;
+            </button>
+          </div>
         </div>
         <div className='mt-4 text-center'>
           <Link

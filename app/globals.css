@@ -1,22 +1,48 @@
 @import 'tailwindcss';
 
 :root {
-  --background: #ffffff;
-  --foreground: #171717;
+  --foreground-rgb: 0, 0, 0;
+  --background-rgb: 255, 255, 255;
+  color-scheme: light;
   --primary: #00e5bf;
   --primary-dark: #00a086;
   --primary-light: #33eacc;
 }
 
-@theme inline {
-  --color-background: var(--background);
-  --color-foreground: var(--foreground);
-  --font-sans: var(--font-geist-sans);
-  --font-mono: var(--font-geist-mono);
+html {
+  color-scheme: light;
+}
+
+html[data-theme="light"] {
+  color-scheme: light;
 }
 
 body {
-  background: var(--background);
-  color: var(--foreground);
+  color: rgb(var(--foreground-rgb));
+  background: rgb(var(--background-rgb));
+  color-scheme: light;
   font-family: var(--font-sans);
+}
+
+/* Force light mode for MUI components */
+[data-mui-color-scheme="light"] {
+  color-scheme: light !important;
+}
+
+/* Override any dark mode styles */
+@media (prefers-color-scheme: dark) {
+  :root {
+    --foreground-rgb: 0, 0, 0;
+    --background-rgb: 255, 255, 255;
+    color-scheme: light;
+  }
+  
+  html {
+    color-scheme: light;
+  }
+  
+  body {
+    color: rgb(var(--foreground-rgb));
+    background: rgb(var(--background-rgb));
+  }
 }
