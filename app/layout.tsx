@@ -6,7 +6,6 @@ import { stackServerApp } from '@/stack';
 import theme from '@/theme';
 import { CssBaseline, ThemeProvider } from '@mui/material';
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v15-appRouter';
-import InitColorSchemeScript from '@mui/material/InitColorSchemeScript';
 import { StackProvider, StackTheme } from '@stackframe/stack';
 
 import '@/app/globals.css';
@@ -36,16 +35,14 @@ export default function RootLayout({
   children: React.ReactNode;
 }>) {
   return (
-    <html lang='en' suppressHydrationWarning>
+    <html lang='en'>
       <body
         className={`${geistSans.variable} ${geistMono.variable} antialiased`}
       >
         <StackProvider app={stackServerApp}>
           <StackTheme>
-            <InitColorSchemeScript attribute='class' />
             <AppRouterCacheProvider options={{ enableCssLayer: true }}>
               <ThemeProvider theme={theme}>
-                {/* CssBaseline kickstart an elegant, consistent, and simple baseline to build upon. */}
                 <CssBaseline />
                 <div className='flex min-h-screen flex-col justify-between'>
                   <Header />

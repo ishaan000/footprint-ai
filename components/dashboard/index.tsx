@@ -2,8 +2,6 @@
 
 import { useCallback, useMemo, useState } from 'react';
 
-import Image from 'next/image';
-
 import { createCarbonEvent, deleteCarbonEvent } from '@/db';
 import { Add as AddIcon } from '@mui/icons-material';
 import {
@@ -15,6 +13,8 @@ import {
   Typography,
 } from '@mui/material';
 import { addDays, format, isSameDay, startOfWeek } from 'date-fns';
+
+import { GrowingPlant } from '@/components/GrowingPlant';
 
 import type { CarbonEvent } from '@/types/CarbonEvents';
 
@@ -91,15 +91,20 @@ export default function Dashboard({
       ),
     [events, weekDays]
   );
+
+  // Calculate total points for plant growth
+  const totalPoints = useMemo(
+    () => events.reduce((sum, event) => sum + event.carbonScore, 0),
+    [events]
+  );
+
   return (
     <Container maxWidth='lg' className='py-4'>
-      <Image
-        src='/freepik__modern-logo-for-a-sustainability-app-a-simple-eleg__84338.webp'
-        alt='Carbon Logo'
-        width={200}
-        height={200}
-        className='object center mx-auto w-full object-cover'
-      />
+      <div className='relative mb-8 flex justify-center'>
+        <div className='h-[240px] w-[240px]'>
+          <GrowingPlant points={totalPoints} className='h-full w-full' />
+        </div>
+      </div>
       <Box className='flex flex-col gap-3'>
         {/* Calendar */}
         <Paper className='p-3'>

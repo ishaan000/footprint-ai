@@ -2,6 +2,10 @@
 
 import { useState } from 'react';
 
+import { createCarbonEvent } from '@/db';
+
+import { CARBON_EVENT_TYPES, CarbonEvent } from '@/types/CarbonEvents';
+
 interface Message {
   role: 'user' | 'assistant';
   content: string;
@@ -11,13 +15,14 @@ interface ChatOptions {
   model?: string;
   temperature?: number;
   maxTokens?: number;
+  userStackAuthId: string;
 }
 
-export function useChat(options?: ChatOptions) {
+export function useChat(options: ChatOptions) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
-  const [points, setPoints] = useState<number>(900); // ✅ Track sustainability points
+  const [points, setPoints] = useState<number>(0);
 
   // ✅ Improved list of sustainability-related keywords
   const measurableKeywords = [
@@ -50,16 +55,39 @@ export function useChat(options?: ChatOptions) {
   const calculatePoints = (userMessage: string): number => {
     if (!isMeasurableAction(userMessage)) {
       console.log(`❌ No points awarded: "${userMessage}" is not measurable.`);
-      return 0; // ❌ No points for invalid actions
+      return 0;
     }
-    const pointsAwarded = Math.floor(Math.random() * 10) + 5; // ✅ Random points (5 - 15)
+    const pointsAwarded = Math.floor(Math.random() * 10) + 5;
     console.log(`✅ Earned ${pointsAwarded} points for: "${userMessage}"`);
     return pointsAwarded;
   };
 
+  // ✅ Function to log chat points as carbon events
+  const logChatPoints = async (userMessage: string, pointsAwarded: number) => {
+    try {
+      const chatEventType = CARBON_EVENT_TYPES.find(
+        (t) => t.id === 'chat-sustainable-action'
+      );
+      if (!chatEventType) return;
+
+      const event: CarbonEvent = {
+        id: 0,
+        type: chatEventType,
+        date: new Date().toISOString(),
+        description: `Chat: ${userMessage}`,
+        carbonScore: pointsAwarded,
+        category: 'other',
+      };
+
+      await createCarbonEvent(options.userStackAuthId, event);
+    } catch (error) {
+      console.error('Failed to log chat points:', error);
+    }
+  };
+
   const formatResponse = (text: unknown): string => {
     if (typeof text === 'object' && text !== null && 'content' in text) {
-      text = (text as { content: string }).content; // Extract "content" if message is an object
+      text = (text as { content: string }).content;
     }
 
     if (typeof text !== 'string') {
@@ -68,9 +96,9 @@ export function useChat(options?: ChatOptions) {
     }
 
     return text
-      .replace(/(^|\n)(\d+)\.(?!\d)/g, '<br><strong>$2.</strong>') // Bold whole numbers only
-      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>') // Bold text (**bold**)
-      .replace(/(\r\n|\r|\n)/g, '<br>'); // Convert new lines to `<br>`
+      .replace(/(^|\n)(\d+)\.(?!\d)/g, '<br><strong>$2.</strong>')
+      .replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>')
+      .replace(/(\r\n|\r|\n)/g, '<br>');
   };
 
   const sendMessage = async (content: string) => {
@@ -82,6 +110,8 @@ export function useChat(options?: ChatOptions) {
       const pointsForAction = calculatePoints(content);
       if (pointsForAction > 0) {
         setPoints((prev) => prev + pointsForAction);
+        // Log the points to the database
+        await logChatPoints(content, pointsForAction);
       }
 
       // Add user message to the chat
@@ -115,12 +145,14 @@ export function useChat(options?: ChatOptions) {
       if (pointsForAction > 0) {
         updatedMessages.push({
           role: 'assistant' as const,
-          content: `🌿 **Great choice!** You earned **${pointsForAction} points**!<br>🌍 **Total Points Earned:** ${points + pointsForAction} points.`,
+          content: `<div class="text-center">
+            <p class="text-lg font-medium mb-1">🌿 Great choice! You earned <span class="text-[#00e5bf]">${pointsForAction} points</span>!</p>
+            <p class="text-sm">🌍 Total Points: <span class="font-medium">${points + pointsForAction}</span></p>
+          </div>`,
         });
       }
 
       setMessages(updatedMessages);
-
       return formattedMessage;
     } catch (err) {
       setError(err instanceof Error ? err.message : 'An error occurred');
@@ -133,7 +165,7 @@ export function useChat(options?: ChatOptions) {
   const clearMessages = () => {
     setMessages([]);
     setError(null);
-    setPoints(0); // Reset points
+    setPoints(0);
   };
 
   return {
@@ -142,6 +174,6 @@ export function useChat(options?: ChatOptions) {
     error,
     sendMessage,
     clearMessages,
-    points, // ✅ Expose points
+    points,
   };
 }

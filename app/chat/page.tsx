@@ -11,7 +11,7 @@ export default async function ChatPage() {
   }
   return (
     <Container maxWidth='lg' className='py-8'>
-      <Chat />
+      <Chat userStackAuthId={userId} />
     </Container>
   );
 }

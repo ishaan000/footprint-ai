@@ -25,6 +25,14 @@ export interface CarbonEventType {
 }
 
 export const CARBON_EVENT_TYPES: CarbonEventType[] = [
+  // Chat Actions
+  {
+    id: 'chat-sustainable-action',
+    name: 'Sustainable Action Discussion',
+    category: 'other',
+    baseScore: 2,
+    icon: '💬',
+  },
   // Transport
   {
     id: 'flight-short',
