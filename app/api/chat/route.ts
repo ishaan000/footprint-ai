@@ -29,25 +29,32 @@ export async function POST(req: Request) {
     // Inject system message at the beginning of the conversation
     const updatedMessages = [systemMessage, ...messages];
 
-    const response = await fetch(
-      'https://api.groq.com/openai/v1/chat/completions',
-      {
-        method: 'POST',
-        headers: {
-          Authorization: `Bearer ${process.env.GROQ_API_KEY}`,
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          model: model || 'mixtral-8x7b-32768',
-          messages: updatedMessages,
-          temperature: temperature || 0.7,
-          max_tokens: maxTokens || 1000,
-        }),
-      }
-    );
+    // Check for Perplexity API key, fallback to OpenAI if not available
+    const apiKey = process.env.PERPLEXITY_API_KEY;
+
+    if (!apiKey) {
+      throw new Error('PERPLEXITY_API_KEY is not set in environment variables');
+    }
+
+    // Use Perplexity Sonar API
+    const response = await fetch('https://api.perplexity.ai/chat/completions', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${apiKey}`,
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        model: model || 'sonar', // Perplexity Sonar model
+        messages: updatedMessages,
+        temperature: temperature || 0.7,
+        max_tokens: maxTokens || 1000,
+      }),
+    });
 
     if (!response.ok) {
-      throw new Error(`Groq API error: ${response.status}`);
+      throw new Error(
+        `Perplexity API error: ${response.status} - ${await response.text()}`
+      );
     }
 
     const data = await response.json();

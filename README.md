@@ -1,27 +1,28 @@
-
-🚀 **Footprint AI** is an **AI-powered personal climate action coach** that helps users track their **CO₂ emissions**, gamifies sustainable habits, and provides **personalized eco-friendly recommendations**. With **real-time tracking, AI insights, and gamification**, Footprint AI makes climate-conscious living effortless and engaging! 🌱💡  
+🚀 **Footprint AI** is an **AI-powered personal climate action coach** that helps users track their **CO₂ emissions**, gamifies sustainable habits, and provides **personalized eco-friendly recommendations**. With **real-time tracking, AI insights, and gamification**, Footprint AI makes climate-conscious living effortless and engaging! 🌱💡
 
 ---
 
 ## **⚡ Features**
+
 ✅ **🌍 CO₂ Emissions Tracking** – Calculate carbon footprint based on daily activities.  
-✅ **💬 AI-Powered Chat** – Get personalized sustainability advice via Groq-powered chatbot.  
+✅ **💬 AI-Powered Chat** – Get personalized sustainability advice via Perplexity Sonar-powered chatbot.  
 ✅ **🏆 Gamified EcoPoints System** – Earn or lose points based on eco-friendly actions.  
 ✅ **📊 Progress Dashboard** – Visualize impact, compare with friends, and set green goals.
-✅ **🔌 API-First Architecture** – Built with **Next.js, TypeScript, Groq API, and Material UI**.  
+✅ **🔌 API-First Architecture** – Built with **Next.js, TypeScript, Perplexity Sonar API, and Material UI**.
 
 ---
 
 ## **🚀 Tech Stack**
-| Technology  | Description |
-|-------------|------------|
+
+| Technology      | Description                                         |
+| --------------- | --------------------------------------------------- |
 | **Next.js 15**  | React-based frontend framework for fast performance |
-| **TypeScript**  | Strongly-typed JavaScript for better scalability |
-| **Groq API**  | AI-powered chat system |
-| **Material UI**  | Beautiful, accessible UI components |
-| **Redis**  | Efficient session management & caching |
-| **PostgreSQL**  | Storing user activity and progress |
-| **Docker**  | Containerized setup for easy deployment |
+| **TypeScript**  | Strongly-typed JavaScript for better scalability    |
+| **Perplexity Sonar API**  | AI-powered chat system with web search capabilities |
+| **Material UI** | Beautiful, accessible UI components                 |
+| **Redis**       | Efficient session management & caching              |
+| **PostgreSQL**  | Storing user activity and progress                  |
+| **Docker**      | Containerized setup for easy deployment             |
 
 ## Getting Started
 
